@@ -81,7 +81,6 @@ var IkaTools = {
         var optionBox = document.createElement('div');
         var contentRandId = 'contentId_' + parseInt(Math.random(999999)*10000000);
         optionBox.innerHTML = '<div class="contentBox01h"><h3 class="header"><span class="textLabel">' + title + '</span></h3><div class="content" id="' + contentRandId + '"></div><div class="footer"/></div></div>';
-        Beastx.log(contentRandId);
         var referenceDiv = $$('#mainview .contentBox01h')[1]
         referenceDiv.parentNode.insertBefore(optionBox, referenceDiv);
         var container = $(contentRandId);
