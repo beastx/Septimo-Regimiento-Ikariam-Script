@@ -16,13 +16,11 @@
 // @history                0.1 Initial release
 // ==/UserScript==
 
-ScriptUpdater.check('OptionsPage', "0.1");
-
 Beastx.OptionsPage = function() {};
 
 Beastx.OptionsPage.prototype.init = function() {
     this.getAndPrepareConfigs();
-    this.optionsForm = New(Beastx.Form, [{ save: function(value) { Beastx.log(value) } }]);
+    this.optionsForm = New(Beastx.Form, [{ save: function(value) {} }]);
     this.createAndAppendOptionBlock();
     this.optionsForm.setValue(this.options);
 }
@@ -74,6 +72,11 @@ Beastx.OptionsPage.prototype.checkbox = function(id, value) {
     );
 }
 
+Beastx.OptionsPage.prototype.onForceClick = function(event) {
+    DOM.cancelEvent(event);
+    scriptUpdater.forceCheck('Septimo_regimiento', Beastx.currentVersion);
+}
+
 Beastx.OptionsPage.prototype.createAndAppendOptionBlock = function() {
     this.optionsBoxContainer = DOM.createElement('div', null, [
         this.optionBoxBlock('Configuracion General', [
@@ -84,7 +87,8 @@ Beastx.OptionsPage.prototype.createAndAppendOptionBlock = function() {
             this.optionBoxRow(
                 'Forzar Update',
                 DOM.createElement('a', {
-                    href: '#'
+                    href: '#',
+                    onclick: DOM.createCaller(this, 'onForceClick')
                 }, [ 'Forzar' ])
             )
         ]),
@@ -132,6 +136,11 @@ Beastx.OptionsPage.prototype.createAndAppendOptionBlock = function() {
             this.optionBoxRow(
                 'Beastx Upgrade Watcher',
                 this.checkbox('upgradeWatcher'),
+                'Este modulo .....'
+            ),
+            this.optionBoxRow(
+                'Beastx Inline Score',
+                this.checkbox('inlineScore'),
                 'Este modulo .....'
             )
         ]),
