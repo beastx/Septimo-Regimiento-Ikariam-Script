@@ -80,10 +80,6 @@ JSN.serialize = function (value) {
             return '"' + x + '"';
         }
     };
-    
-    Beastx.log(value);
-    Beastx.log(typeof value);
-    
     return s[typeof value](value);
 }
 
