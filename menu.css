@@ -1,0 +1,23 @@
+#container { margin-top: 20px; }
+#GF_toolbar { display: none; }
+#extraDiv1 { margin-top: 20px; }
+#extraDiv2 { margin-top: 20px; }
+
+#beastxMenuContainer { text-align: left; position: fixed; width: 100%; height: 28px; background-color: #666; top: 0px; left: 0px; z-index: 999999; color: white; border-bottom: 2px solid black; }
+#beastxMenuContainer a { color: white; }
+
+#beastxMenuContainer .rightContainer { float: right; }
+#beastxMenuContainer .leftContainer { float: left; }
+
+#beastxMenuContainer ul.ikariamOldOptions { right: 1em; top: 8px; position: absolute; }
+#beastxMenuContainer ul.ikariamOldOptions li { float: left; margin-left: 1em; }
+#beastxMenuContainer ul.ikariamOldOptions li a { font-weight: bold }
+
+#beastxMenuContainer ul.beastxMainMenu { left: 1em; top: 8px; position: absolute; }
+#beastxMenuContainer ul.beastxMainMenu li { float: left; margin-left: 1em; }
+#beastxMenuContainer ul.beastxMainMenu li a { font-weight: bold }
+
+
+
+
+.menu { display: none; }
