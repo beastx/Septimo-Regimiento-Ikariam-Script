@@ -16,8 +16,6 @@
 // @history                0.1 Initial release
 // ==/UserScript==
 
-ScriptUpdater.check('TopMenu', "0.1");
-
 Beastx.TopMenu = function() {};
 
 Beastx.TopMenu.prototype.init = function() {

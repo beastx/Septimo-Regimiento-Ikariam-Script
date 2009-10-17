@@ -10,13 +10,11 @@
 // @require               http://ikariam.beastx/tools/userScripts/requires/IkaTools.js
 // @require               http://ikariam.beastx/tools/userScripts/requires/ScriptUpdater.js
 
-// @version               0.01
+// @version               0.1
 // @author                Beastx
 //
-// @history                0.01 Initial release
+// @history                0.1 Initial release
 // ==/UserScript==
-
-ScriptUpdater.check('ShipMovementsViewImprover', "0.01");
 
 Beastx.ShipMovementsViewImprover = function() {};
 
