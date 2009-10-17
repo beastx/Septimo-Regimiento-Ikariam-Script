@@ -82,7 +82,7 @@ $path = dirname(__FILE__);
 $files = getFiles($path, 'js', array('WorldInfo.js', 'Log.js'));
 
 for ($i = 0; $i < count($files); ++$i) {
-    changeHostForFile($host, $path, $files[$i]);
+    changeHostForFile('http://ikariam.beastx', $path, $files[$i]);
 }
 
 echo "-------------------------------------------------------------------------------\n" .$changes . " cambios realizados\n";

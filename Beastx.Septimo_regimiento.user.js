@@ -4,33 +4,33 @@
 // @description        Scripts para la alianza 7mo Regimiento
 // @include               http://*.ikariam.com/*
 
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/Json.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/VAR.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/DOM.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/IkaTools.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/ScriptUpdater.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/Beastx.js
+// @require               http://ikariam.beastx/tools/userScripts/requires/Json.js
+// @require               http://ikariam.beastx/tools/userScripts/requires/VAR.js
+// @require               http://ikariam.beastx/tools/userScripts/requires/DOM.js
+// @require               http://ikariam.beastx/tools/userScripts/requires/IkaTools.js
+// @require               http://ikariam.beastx/tools/userScripts/requires/ScriptUpdater.js
+// @require               http://ikariam.beastx/tools/userScripts/requires/Beastx.js
 
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/ColorSelector.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/DragManager.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/FloatingPopup.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/TabManager.js
+// @require               http://ikariam.beastx/tools/userScripts/requires/ColorSelector.js
+// @require               http://ikariam.beastx/tools/userScripts/requires/DragManager.js
+// @require               http://ikariam.beastx/tools/userScripts/requires/FloatingPopup.js
+// @require               http://ikariam.beastx/tools/userScripts/requires/TabManager.js
 
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/Beastx.ThinViews.user.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/Beastx.ScrollbarRemover.user.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/Beastx.DataSaver.user.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/Beastx.AllianceViewImprover.user.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/Beastx.AlliedOnlineAdvisor.user.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/Beastx.GeneralViewPageCleaner.user.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/Beastx.InlineScore.user.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/Beastx.MessageManager.user.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/Beastx.OurDeployedCitiesCleaner.user.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/Beastx.ShipMovementsViewImprover.user.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/Beastx.TransportResourcesHelper.user.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/Beastx.UpgradeWatcher.user.js
+// @require               http://ikariam.beastx/tools/userScripts/Beastx.ThinViews.user.js
+// @require               http://ikariam.beastx/tools/userScripts/Beastx.ScrollbarRemover.user.js
+// @require               http://ikariam.beastx/tools/userScripts/Beastx.DataSaver.user.js
+// @require               http://ikariam.beastx/tools/userScripts/Beastx.AllianceViewImprover.user.js
+// @require               http://ikariam.beastx/tools/userScripts/Beastx.AlliedOnlineAdvisor.user.js
+// @require               http://ikariam.beastx/tools/userScripts/Beastx.GeneralViewPageCleaner.user.js
+// @require               http://ikariam.beastx/tools/userScripts/Beastx.InlineScore.user.js
+// @require               http://ikariam.beastx/tools/userScripts/Beastx.MessageManager.user.js
+// @require               http://ikariam.beastx/tools/userScripts/Beastx.OurDeployedCitiesCleaner.user.js
+// @require               http://ikariam.beastx/tools/userScripts/Beastx.ShipMovementsViewImprover.user.js
+// @require               http://ikariam.beastx/tools/userScripts/Beastx.TransportResourcesHelper.user.js
+// @require               http://ikariam.beastx/tools/userScripts/Beastx.UpgradeWatcher.user.js
 
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/Beastx.TopMenu.user.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/Beastx.OptionsPage.user.js
+// @require               http://ikariam.beastx/tools/userScripts/Beastx.TopMenu.user.js
+// @require               http://ikariam.beastx/tools/userScripts/Beastx.OptionsPage.user.js
 
 // @version               0.1
 // @author                Beastx

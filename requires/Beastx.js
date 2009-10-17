@@ -3,11 +3,11 @@
 // @namespace       Beastx
 // @description        MainScript
 // @include               http://*.ikariam.com/*
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/Json.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/VAR.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/DOM.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/IkaTools.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/ScriptUpdater.js
+// @require               http://ikariam.beastx/tools/userScripts/requires/Json.js
+// @require               http://ikariam.beastx/tools/userScripts/requires/VAR.js
+// @require               http://ikariam.beastx/tools/userScripts/requires/DOM.js
+// @require               http://ikariam.beastx/tools/userScripts/requires/IkaTools.js
+// @require               http://ikariam.beastx/tools/userScripts/requires/ScriptUpdater.js
 // @version               0.1
 // @author                Beastx
 //
