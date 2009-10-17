@@ -271,7 +271,9 @@ DOM.createElement = function(tagName, attributes, childNodes) {
                 } else if (childNodes[i].nodeType == 1) {
                     element.appendChild(childNodes[i]);
                 } else {
-                    Beastx.log('falta implementar otros tipos de datos en core.js createElement');
+                    if (Beastx.debugMode) {
+                        Beastx.log('falta implementar otros tipos de datos en core.js createElement');
+                    }
                 }
             }
         }
