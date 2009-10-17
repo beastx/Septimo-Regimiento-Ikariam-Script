@@ -16,8 +16,7 @@
 
 Beastx = {
     ScriptName: 'Beastx Base Ikariam Script',
-    HomePage: 'http://7moreg.beastx.com.ar/herramientas/',
-    Version: 0
+    HomePage: 'http://7moreg.beastx.com.ar/herramientas/'
 };
 
 Beastx.log = function(val, title) {
@@ -66,12 +65,7 @@ Beastx.getConfig = function () {
     Beastx.Config = config ? config :{
         options: {
             serverUrl: 'http://7moreg.beastx.com.ar',
-            useFirefox: true,
-            dataSaver: true,
-            thinView: false,
-            showMenu: true,
-            scrollBarRemover: true,
-            militaryPageImprover: true
+            showMenu: true
         },
         user: {
             id: 126035,
@@ -145,5 +139,4 @@ Beastx.Form.prototype.save = function() {
     }
 }
 
-ScriptUpdater.check('Beastx', "0.1", null, true);
 IkaTools.init();
