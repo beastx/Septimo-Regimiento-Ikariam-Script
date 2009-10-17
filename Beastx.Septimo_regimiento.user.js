@@ -8,8 +8,8 @@
 // @require               http://ikariam.beastx/tools/userScripts/requires/VAR.js
 // @require               http://ikariam.beastx/tools/userScripts/requires/DOM.js
 // @require               http://ikariam.beastx/tools/userScripts/requires/IkaTools.js
-// @require               http://ikariam.beastx/tools/userScripts/requires/ScriptUpdater.js
 // @require               http://ikariam.beastx/tools/userScripts/requires/Beastx.js
+// @require               http://ikariam.beastx/tools/userScripts/requires/ScriptUpdater.js
 
 // @require               http://ikariam.beastx/tools/userScripts/requires/ColorSelector.js
 // @require               http://ikariam.beastx/tools/userScripts/requires/DragManager.js
@@ -38,8 +38,6 @@
 // @history                0.1 Initial release
 
 // ==/UserScript==
-
-ScriptUpdater.check('Septimo_regimiento', "0.1");
 
 Beastx.init();
 
@@ -92,4 +90,11 @@ if (actualView == 'login') {
         New(Beastx.UpgradeWatcher, [ actualView ]);
     }
     
-}
+    if (Beastx.Config.options.inlineScore) {
+        New(Beastx.InlineScore, [ actualView ]);
+    }
+    
+};
+
+scriptUpdater.check('Septimo_regimiento', "0.1");
+scriptUpdater.check('Beastx', "0.1");
