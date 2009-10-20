@@ -74,7 +74,7 @@ Beastx.OptionsPage.prototype.checkbox = function(id, value) {
 
 Beastx.OptionsPage.prototype.onForceClick = function(event) {
     DOM.cancelEvent(event);
-    var scriptUpdater = New(ScriptUpdater, [ 'Septimo_regimiento', Beastx.currentVersion, true ]);
+    var scriptUpdater = New(ScriptUpdater, [ 'Beastx.Septimo_regimiento.user.js', Beastx.currentVersion, true ]);
     scriptUpdater.forceCheck();
 }
 
