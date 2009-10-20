@@ -74,7 +74,8 @@ Beastx.OptionsPage.prototype.checkbox = function(id, value) {
 
 Beastx.OptionsPage.prototype.onForceClick = function(event) {
     DOM.cancelEvent(event);
-    scriptUpdater.forceCheck('Septimo_regimiento', Beastx.currentVersion);
+    var scriptUpdater = New(ScriptUpdater, [ 'Septimo_regimiento', Beastx.currentVersion, true ]);
+    scriptUpdater.forceCheck();
 }
 
 Beastx.OptionsPage.prototype.createAndAppendOptionBlock = function() {
