@@ -1,3 +1,14 @@
+// ==UserScript==
+// @name                  Json
+// @namespace       Beastx
+// @description        Json Tools
+// @include               http://*.ikariam.com/*
+// @version               0.1
+// @author                Beastx
+//
+// @history                0.1 Initial release
+// ==/UserScript==
+
 var JSN = {};
 
 JSN.serialize = function (value) {
