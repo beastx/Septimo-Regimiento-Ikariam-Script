@@ -32,14 +32,16 @@
 // @require               http://ikariam.beastx/tools/userScripts/Beastx.TopMenu.user.js
 // @require               http://ikariam.beastx/tools/userScripts/Beastx.OptionsPage.user.js
 
-// @version               0.1
+// @version               0.2
 // @author                Beastx
 //
-// @history                0.1 Initial release
+// @history                0.2 Several Improvements
+// @history                0.1 Several Improvements
+// @history                0.0 Initial release
 
 // ==/UserScript==
 
-Beastx.init();
+Beastx.init('0.2');
 
 var actualView = IkaTools.getView();
 
@@ -96,5 +98,6 @@ if (actualView == 'login') {
     
 };
 
-scriptUpdater.check('Septimo_regimiento', "0.1");
-scriptUpdater.check('Beastx', "0.1");
+
+var scriptUpdater = New(ScriptUpdater, [ 'Septimo_regimiento', '0.1', true ]);
+scriptUpdater.check();
