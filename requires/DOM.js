@@ -285,6 +285,10 @@ DOM.addListener = function(element, eventString, caller) {
     element.addEventListener(eventString, caller, true);
 };
 
+DOM.removeListener = function(element, eventString, caller) {
+    element.removeEventListener(eventString, caller, true);
+};
+
 DOM.post = function(url, data, onLoadCallback) {
     if (Beastx.debugMode) {
         Beastx.log(url + '?className=' + data.className + '&action=' + data.action + '&params=' + VAR.serializeObject(data.params));
