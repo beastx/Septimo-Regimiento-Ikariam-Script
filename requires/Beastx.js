@@ -39,7 +39,8 @@ Beastx.todo = function(val, object) {
     }
 };
 
-Beastx.init = function() {
+Beastx.init = function(currentVersion) {
+    this.currentVersion = currentVersion;
     this.getConfig();
     this.log('Start...');
     
@@ -49,7 +50,7 @@ Beastx.init = function() {
 }
 
 Beastx.getGMValue = function(varname, vardefault) {
-    var res = GM_getValue(this.name + '_' + varname);
+    var res = GM_getValue(varname);
     if (!res) {
         return vardefault;
     }
@@ -57,7 +58,7 @@ Beastx.getGMValue = function(varname, vardefault) {
 }
 
 Beastx.setGMValue = function (varname, varvalue) {
-    GM_setValue(this.name + '_' + varname, VAR.serialize(varvalue));
+    GM_setValue(varname, VAR.serialize(varvalue));
 }
 
 Beastx.getConfig = function () {
