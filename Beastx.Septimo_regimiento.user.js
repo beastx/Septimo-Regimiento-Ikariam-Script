@@ -99,5 +99,5 @@ if (actualView == 'login') {
 };
 
 
-var scriptUpdater = New(ScriptUpdater, [ 'Septimo_regimiento', '0.1', true ]);
+var scriptUpdater = New(ScriptUpdater, [ 'Beastx.Septimo_regimiento.user.js', '0.1', true ]);
 scriptUpdater.check();
