@@ -104,12 +104,12 @@ ScriptUpdater.prototype.getLastOfferedVersionForRequiredFile = function(requireF
 }
 
 ScriptUpdater.prototype.onAllFilesChecked = function() {
-    //~ if (!this.alreadyOffered(this.scriptFileName, this.meta.version) || this.forced) {
-        //~ if (!this.alreadyOffered(this.scriptFileName, this.meta.version)) {
-            //~ this.addOffer(this.scriptFileName, this.meta.version);
-        //~ }
+    if (!this.alreadyOffered(this.scriptFileName, this.meta.version) || this.forced) {
+        if (!this.alreadyOffered(this.scriptFileName, this.meta.version)) {
+            this.addOffer(this.scriptFileName, this.meta.version);
+        }
         this.showNotice();
-    //~ }
+    }
 }
 
 ScriptUpdater.prototype.addLastCheckedDate = function() {
