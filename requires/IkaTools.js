@@ -3,10 +3,11 @@
 // @namespace       Beastx
 // @description        Tools to be included in your Ikariam Greasemonkey scripts.
 // @include               http://*.ikariam.com/*
-// @version               0.01
+// @version               0.2
 // @author                Beastx
 //
-// @history                0.01 Initial release
+// @history                0.2 Improve addInfoBox method (added beforeElement paramter)
+// @history                0.1 Initial release
 //
 // ==/UserScript==
 
@@ -66,16 +67,16 @@ var IkaTools = {
         }
         return x1 + x2;
     },
-    addInfoBox:function(titleHtml, contentDiv)  {
+    addInfoBox:function(title, contentDiv, beforeElement)  {
         var box = document.createElement('div');
         box.className = 'dynamic';
-        box.innerHTML = '<h3 class="header">Beastx: ' + titleHtml + '</h3>';
+        box.innerHTML = '<h3 class="header">Beastx: ' + title + '</h3>';
         contentDiv.className = "content";
         box.appendChild(contentDiv);
         var footer = document.createElement('div');
         footer.className = "footer";
         box.appendChild(footer);
-        document.getElementById('mainview').parentNode.insertBefore(box, document.getElementById('mainview'));
+        document.getElementById('mainview').parentNode.insertBefore(box, beforeElement ? beforeElement : document.getElementById('mainview'));
     },
     addOptionBlock:function(title, content) {
         var optionBox = document.createElement('div');
