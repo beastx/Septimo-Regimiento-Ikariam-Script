@@ -44,9 +44,6 @@ function getQueryString(ji, fromString) {
     return null;
 }
 
-
-
-
 DOM = {};
     
 DOM.xpath = function(query) {
