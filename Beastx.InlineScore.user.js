@@ -40,6 +40,8 @@ Beastx.InlineScore.prototype.init = function(currentView) {
         ally: {},
         city: {}
     };
+    
+    this.searchingMsgParts = [ '.', '...', '.....', '.......' ];
         
     this.serverData = {
         host: top.location.host,
@@ -87,17 +89,13 @@ Beastx.InlineScore.prototype.setSearchingMsg = function(scoreCategory, scoreType
     if (step == 0) {
         clearTimeout(this.searchingMsgTimeOut[scoreCategory][scoreType]);
     } else {
-        if (step == 4) {
+        if (step == this.searchingMsgParts.length) {
             step = 1;
         } else {
             ++step;
         }
-        var points = '';
-        for (var i = 0; i < step; ++i) {
-            points += '.';
-        }
         this.searchingMsgTimeOut[scoreCategory][scoreType] = setTimeout(DOM.createCaller(this, 'setSearchingMsg', [ scoreCategory, scoreType, step ]), 100);
-        this.updateScoreMsg(this[scoreCategory + 'DataElements'][scoreType], 'Buscando ' + points);
+        this.updateScoreMsg(this[scoreCategory + 'DataElements'][scoreType], 'Buscando ' + this.searchingMsgParts[step - 1]);
     }
 }
 
