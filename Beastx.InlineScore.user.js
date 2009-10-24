@@ -13,6 +13,7 @@
 // @version               0.2
 // @author                Beastx
 //
+// @history                0.2 Added animation dots when script is searching
 // @history                0.2 Show 'Sin puntos' msg when number value is 0
 // @history                0.2 Added media points alliance score
 // @history                0.2 Improve FormatNumber method to show correct unitLetter and a more friendly number
@@ -33,6 +34,12 @@ Beastx.InlineScore.prototype.init = function(currentView) {
     this.playerDataElements = {};
     this.allyDataElements = {};
     this.cityDataElements = {};
+        
+    this.searchingMsgTimeOut = {
+        player: {},
+        ally: {},
+        city: {}
+    };
         
     this.serverData = {
         host: top.location.host,
@@ -74,6 +81,24 @@ Beastx.InlineScore.prototype.onCityClick = function() {
 
 Beastx.InlineScore.prototype.hideOriginalIkariamElements = function() {
     $('infocontainer').style.display = 'none';
+}
+
+Beastx.InlineScore.prototype.setSearchingMsg = function(scoreCategory, scoreType, step) {
+    if (step == 0) {
+        clearTimeout(this.searchingMsgTimeOut[scoreCategory][scoreType]);
+    } else {
+        if (step == 4) {
+            step = 1;
+        } else {
+            ++step;
+        }
+        var points = '';
+        for (var i = 0; i < step; ++i) {
+            points += '.';
+        }
+        this.searchingMsgTimeOut[scoreCategory][scoreType] = setTimeout(DOM.createCaller(this, 'setSearchingMsg', [ scoreCategory, scoreType, step ]), 100);
+        this.updateScoreMsg(this[scoreCategory + 'DataElements'][scoreType], 'Buscando ' + points);
+    }
 }
 
 Beastx.InlineScore.prototype.updateScoreMsg = function(element, value) {
@@ -340,6 +365,7 @@ Beastx.InlineScore.prototype.onGetScoreRequestLoad = function(scoreType, respons
     }
     document.body.removeChild(hiddenDiv);
     this.updateScoreMsg(this.playerDataElements[scoreType], this.formatPointsNumber(totalScore));
+    this.setSearchingMsg('player', scoreType, 0);
 }
 
 Beastx.InlineScore.prototype.onGetAllianceRequestLoad = function(responseHtmlAsText) {
@@ -356,22 +382,28 @@ Beastx.InlineScore.prototype.onGetAllianceRequestLoad = function(responseHtmlAsT
     var allianceTotalPoints = allianceTempData[1].replace('(', '').replace(')', '');
 
     document.body.removeChild(hiddenDiv);
+    
+    this.setSearchingMsg('ally', 'totalMembers', 0);
+    this.setSearchingMsg('ally', 'ranking', 0);
+    this.setSearchingMsg('ally', 'totalPoints', 0);
+    this.setSearchingMsg('ally', 'mediaPoints', 0);
+    
     this.updateScoreMsg(this.allyDataElements.totalMembers, allianceMembers);
     this.updateScoreMsg(this.allyDataElements.ranking, alliancePosition);
     this.updateScoreMsg(this.allyDataElements.totalPoints, this.formatPointsNumber(allianceTotalPoints));
-    
+
     var mediaPointsAsFormatedString = (((allianceTotalPoints.replace(/,/g, '') / allianceMembers) + '') / 1000 + '').replace('.', ',');
     this.updateScoreMsg(this.allyDataElements.mediaPoints, this.formatPointsNumber(mediaPointsAsFormatedString));
 }
 
 Beastx.InlineScore.prototype.getScore = function(scoreType) {
-    this.updateScoreMsg(this.playerDataElements[scoreType], 'Buscando...');
+    this.setSearchingMsg('player', scoreType, 1);
     this.requestScore(scoreType, DOM.createCaller(this, 'onGetScoreRequestLoad'));
 }
 
 Beastx.InlineScore.prototype.getAllyScore = function() {
     for (var scoreType in this.allyDataElements) {
-        this.updateScoreMsg(this.allyDataElements[scoreType], 'Buscando...');
+        this.setSearchingMsg('ally', scoreType, 1);
     }
     this.requestAlliance(DOM.createCaller(this, 'onGetAllianceRequestLoad'));
 }
