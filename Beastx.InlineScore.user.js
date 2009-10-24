@@ -13,6 +13,8 @@
 // @version               0.2
 // @author                Beastx
 //
+// @history                0.2 Show 'Sin puntos' msg when number value is 0
+// @history                0.2 Added media points alliance score
 // @history                0.2 Improve FormatNumber method to show correct unitLetter and a more friendly number
 // @history                0.2 Removed some default ikariam values
 // @history                0.2 Complete code refactor
@@ -217,18 +219,22 @@ Beastx.InlineScore.prototype.getSelectedPlayerCityLevel = function() {
 
 Beastx.InlineScore.prototype.formatPointsNumber = function(number) {
     if (number) {
-        var tempFormatedNumber = (number.replace(/,/g, '')/1000) + '';
-        var integerPart = tempFormatedNumber.substring(0, tempFormatedNumber.indexOf('.'));
-        if (integerPart > 999) {
-            integerPartTemp = (integerPart /1000) + ''
-            integerPart = parseInt(integerPartTemp) + '';
-            var decimalPart = integerPartTemp.substr(integerPartTemp.indexOf('.') + 1, 1);
-            var unitLetter = 'M';
+        if (number != '0') {
+            var tempFormatedNumber = (number.replace(/,/g, '')/1000) + '';
+            var integerPart = tempFormatedNumber.substring(0, tempFormatedNumber.indexOf('.'));
+            if (integerPart > 999) {
+                integerPartTemp = (integerPart /1000) + ''
+                integerPart = parseInt(integerPartTemp) + '';
+                var decimalPart = integerPartTemp.substr(integerPartTemp.indexOf('.') + 1, 1);
+                var unitLetter = 'M';
+            } else {
+                var decimalPart = tempFormatedNumber.substr(tempFormatedNumber.indexOf('.') + 1, 1);
+                var unitLetter = 'K';
+            }
+            return  integerPart + (decimalPart != 0 ? '.'  + decimalPart : '') + ' ' + unitLetter;
         } else {
-            var decimalPart = tempFormatedNumber.substr(tempFormatedNumber.indexOf('.') + 1, 1);
-            var unitLetter = 'K';
+            return 'Sin puntos';
         }
-        return  integerPart + (decimalPart != 0 ? '.'  + decimalPart : '') + ' ' + unitLetter;
     } else {
         return 'Error';
     }
