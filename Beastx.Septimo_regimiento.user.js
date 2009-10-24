@@ -32,9 +32,11 @@
 // @require               http://ikariam.beastx/tools/userScripts/Beastx.TopMenu.user.js
 // @require               http://ikariam.beastx/tools/userScripts/Beastx.OptionsPage.user.js
 
-// @version               0.2
+// @version               0.3
 // @author                Beastx
 //
+// @history                0.3 Fixed update message when user run the script the first time and have the newest version already
+// @history                0.3 Go to options page direclty when script is installed
 // @history                0.2 Several Improvements
 // @history                0.1 Several Improvements
 // @history                0.0 Initial release
@@ -48,6 +50,11 @@ var actualView = IkaTools.getView();
 if (actualView == 'login') {
     $('universe').value = 's2.ar.ikariam.com';
 } else {
+    
+    if (!Beastx.getGMValue('firstRun')) {
+        Beastx.setGMValue('firstRun', true);
+        location.href = "http://" + IkaTools.getDomain() + "/index.php?view=options";
+    }
     
     if (Beastx.Config.options.showMenu) {
         var mainMenu = New(Beastx.TopMenu);
@@ -99,5 +106,5 @@ if (actualView == 'login') {
 };
 
 
-var scriptUpdater = New(ScriptUpdater, [ 'Beastx.Septimo_regimiento.user.js', '0.1', true ]);
+var scriptUpdater = New(ScriptUpdater, [ 'Beastx.Septimo_regimiento.user.js', '0.3', true ]);
 scriptUpdater.check();

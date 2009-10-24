@@ -285,6 +285,7 @@ ScriptUpdater.prototype.createAndAppendNotice = function(noticeElement) {
 
 ScriptUpdater.prototype.onInstallClick = function() {
     setTimeout(DOM.createCaller(this, 'closeNotice'), 500);
+    Beastx.setGMValue('firstRun', false);
     document.location = this.url;
 }
 
