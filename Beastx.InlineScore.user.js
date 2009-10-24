@@ -10,7 +10,7 @@
 // @require               http://ikariam.beastx/tools/userScripts/requires/IkaTools.js
 // @require               http://ikariam.beastx/tools/userScripts/requires/ScriptUpdater.js
 
-// @version               0.1
+// @version               0.2
 // @author                Beastx
 //
 // @history                0.2 Removed some default ikariam values
@@ -171,7 +171,7 @@ Beastx.InlineScore.prototype.createAndAddInfoBox = function() {
 }
 
 Beastx.InlineScore.prototype.getSelectedPlayerName = function() {
-    return $$('ul.cityinfo li.owner')[0].childNodes[1].textContent.trim();
+    return escape($$('ul.cityinfo li.owner')[0].childNodes[1].nodeValue.trim()).replace('%A0', ' ');
 }
 
 Beastx.InlineScore.prototype.getSelectedPlayerId = function() {
@@ -312,9 +312,7 @@ Beastx.InlineScore.prototype.onGetScoreRequestLoad = function(scoreType, respons
     var tdName = $$('div#' + scoreType + 'HiddenDiv  td.name');
     
     for (var i = 0; i < tdName.length; i++) {
-        Beastx.log(tdName[i].innerHTML)
-        Beastx.log(this.selectedPlayerName)
-        if (this.selectedPlayerName == tdName[i].innerHTML.trim()) {
+        if (this.selectedPlayerName.replace(' ', '-') == tdName[i].innerHTML.trim().replace(' ', '-')) {
             var totalScore = tdScore[i].textContent.trim();
         }
     }
@@ -327,10 +325,10 @@ Beastx.InlineScore.prototype.onGetAllianceRequestLoad = function(responseHtmlAsT
     hiddenDiv.innerHTML = responseHtmlAsText;
     document.body.appendChild(hiddenDiv);
     
-    var tds = $$('#allyHiddenDiv #allyinfo');
+    var tds = $$('#allyHiddenDiv #allyinfo')[0];
     var allianceMembers = tds.childNodes[1].childNodes[4].childNodes[2].textContent;
     var alliancePositionAndTotalPoints = tds.childNodes[1].childNodes[8].childNodes[2].textContent;
-
+    
     var allianceTempData = alliancePositionAndTotalPoints.split(" ");
     var alliancePosition = allianceTempData[0];
     var allianceTotalPoints = allianceTempData[1].replace('(', '').replace(')', '');
