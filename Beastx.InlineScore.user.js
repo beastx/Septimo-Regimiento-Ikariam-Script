@@ -13,6 +13,7 @@
 // @version               0.2
 // @author                Beastx
 //
+// @history                0.2 Improve FormatNumber method to show correct unitLetter and a more friendly number
 // @history                0.2 Removed some default ikariam values
 // @history                0.2 Complete code refactor
 // @history                0.1 Initial release
@@ -161,6 +162,7 @@ Beastx.InlineScore.prototype.createAndAddInfoBox = function() {
                     ])
                 ]),
                 createOptionRow('totalPoints', 'Totales', this.allyDataElements),
+                createOptionRow('mediaPoints', 'Media', this.allyDataElements),
                 createOptionRow('ranking', 'Ranking', this.allyDataElements),
                 createOptionRow('totalMembers', 'Miembros', this.allyDataElements)
             ])
@@ -214,8 +216,22 @@ Beastx.InlineScore.prototype.getSelectedPlayerCityLevel = function() {
 }
 
 Beastx.InlineScore.prototype.formatPointsNumber = function(number) {
-    return number ? number : 'Error';
-    //~ return parseInt(parseInt(number.replace(',', '')) / 1000) + 'k';
+    if (number) {
+        var tempFormatedNumber = (number.replace(/,/g, '')/1000) + '';
+        var integerPart = tempFormatedNumber.substring(0, tempFormatedNumber.indexOf('.'));
+        if (integerPart > 999) {
+            integerPartTemp = (integerPart /1000) + ''
+            integerPart = parseInt(integerPartTemp) + '';
+            var decimalPart = integerPartTemp.substr(integerPartTemp.indexOf('.') + 1, 1);
+            var unitLetter = 'M';
+        } else {
+            var decimalPart = tempFormatedNumber.substr(tempFormatedNumber.indexOf('.') + 1, 1);
+            var unitLetter = 'K';
+        }
+        return  integerPart + (decimalPart != 0 ? '.'  + decimalPart : '') + ' ' + unitLetter;
+    } else {
+        return 'Error';
+    }
 }
 
 Beastx.InlineScore.prototype.getCityInformation = function() {
@@ -337,6 +353,9 @@ Beastx.InlineScore.prototype.onGetAllianceRequestLoad = function(responseHtmlAsT
     this.updateScoreMsg(this.allyDataElements.totalMembers, allianceMembers);
     this.updateScoreMsg(this.allyDataElements.ranking, alliancePosition);
     this.updateScoreMsg(this.allyDataElements.totalPoints, this.formatPointsNumber(allianceTotalPoints));
+    
+    var mediaPointsAsFormatedString = (((allianceTotalPoints.replace(/,/g, '') / allianceMembers) + '') / 1000 + '').replace('.', ',');
+    this.updateScoreMsg(this.allyDataElements.mediaPoints, this.formatPointsNumber(mediaPointsAsFormatedString));
 }
 
 Beastx.InlineScore.prototype.getScore = function(scoreType) {
