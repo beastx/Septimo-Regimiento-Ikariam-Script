@@ -17,11 +17,12 @@
 // @require               http://ikariam.beastx/tools/userScripts/requires/FloatingPopup.js
 // @require               http://ikariam.beastx/tools/userScripts/requires/TabManager.js
 
-// @require               http://ikariam.beastx/tools/userScripts/ikariam/Polis.js
+// @require               http://ikariam.beastx/tools/userScripts/ikariam/City.js
 // @require               http://ikariam.beastx/tools/userScripts/ikariam/Building.js
 // @require               http://ikariam.beastx/tools/userScripts/ikariam/Island.js
 // @require               http://ikariam.beastx/tools/userScripts/ikariam/Player.js
 // @require               http://ikariam.beastx/tools/userScripts/ikariam/Alliance.js
+// @require               http://ikariam.beastx/tools/userScripts/ikariam/Resource.js
 
 // @require               http://ikariam.beastx/tools/userScripts/modules/AllianceMap.js
 // @require               http://ikariam.beastx/tools/userScripts/modules/AllianceViewImprover.js
