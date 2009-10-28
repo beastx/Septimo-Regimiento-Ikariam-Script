@@ -153,7 +153,7 @@ Beastx.OptionsPage.prototype.createAndAppendOptionBlock = function() {
                 true
             ),
             this.optionBoxRow(
-                'Beastx - Unit Formater',
+                'Beastx - Unit Formatter',
                 this.checkbox('unitFormater'),
                 'Este modulo nos genera un texto que nos da la posibilidad de copiar y pegar para de esta forma informar de una manera sencilla sobre nuestro estado militar a quien lo necesite.',
                 true
