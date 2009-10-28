@@ -1,15 +1,5 @@
 // ==UserScript==
 // @name                  Top Menu
-// @namespace       Beastx
-// @description        Top Menu
-// @include               http://*.ikariam.com/*
-
-// @require               http://ikariam.beastx/tools/userScripts/requires/Beastx.js
-// @require               http://ikariam.beastx/tools/userScripts/requires/VAR.js
-// @require               http://ikariam.beastx/tools/userScripts/requires/DOM.js
-// @require               http://ikariam.beastx/tools/userScripts/requires/IkaTools.js
-// @require               http://ikariam.beastx/tools/userScripts/requires/ScriptUpdater.js
-
 // @version               0.2
 // @author                Beastx
 //
@@ -21,9 +11,8 @@
 Beastx.TopMenu = function() {};
 
 Beastx.TopMenu.prototype.init = function() {
-    this.options = {
-    }
-    this.loadCss();
+    this.options = {};
+    this.addStyles();
     this.create();
     this.append();
     setInterval(DOM.createCaller(this, 'updateTime'), 1000);
@@ -59,11 +48,22 @@ Beastx.TopMenu.prototype.updateTime = function() {
     $('spanServertime').innerHTML = unsafeWindow['obj_ServerTime'].textContent;
 }
 
-Beastx.TopMenu.prototype.loadCss = function() {
-    var styleFile = document.createElement('link');
-    styleFile.href = Beastx.Config.options.serverUrl + '/tools/userScripts/menu.css';
-    styleFile.type = 'text/css';
-    styleFile.media = 'screen';
-    styleFile.rel = 'stylesheet';
-    document.getElementsByTagName('head')[0].appendChild(styleFile);
+Beastx.TopMenu.prototype.addStyles = function() {
+    GM_addStyle("\
+        #container { margin-top: 20px; }\
+        #GF_toolbar { display: none; }\
+        #extraDiv1 { margin-top: 20px; }\
+        #extraDiv2 { margin-top: 20px; }\
+        #beastxMenuContainer { text-align: left; position: fixed; width: 100%; height: 28px; background-color: #666; top: 0px; left: 0px; z-index: 999999; color: white; border-bottom: 2px solid black; }\
+        #beastxMenuContainer a { color: white; }\
+        #beastxMenuContainer .rightContainer { float: right; }\
+        #beastxMenuContainer .leftContainer { float: left; }\
+        #beastxMenuContainer ul.ikariamOldOptions { right: 1em; top: 8px; position: absolute; }\
+        #beastxMenuContainer ul.ikariamOldOptions li { float: left; margin-left: 1em; }\
+        #beastxMenuContainer ul.ikariamOldOptions li a { font-weight: bold }\
+        #beastxMenuContainer ul.beastxMainMenu { left: 1em; top: 8px; position: absolute; }\
+        #beastxMenuContainer ul.beastxMainMenu li { float: left; margin-left: 1em; }\
+        #beastxMenuContainer ul.beastxMainMenu li a { font-weight: bold }\
+        .menu { display: none; }\
+    ");
 }
