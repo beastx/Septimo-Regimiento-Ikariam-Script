@@ -1,13 +1,13 @@
 // ==UserScript==
-// @name                  Alliance View Improver
+// @name                  Distance Calculator
 // @version               0.1
 // @author                Beastx
 //
 // @history                0.1 Initial release
 // ==/UserScript==
 
-Beastx.AllianceViewImprover = function() {};
+Beastx.DistanceCalculator = function() {};
 
-Beastx.AllianceViewImprover.prototype.init = function() {
-    this.scriptName = 'Alliance View Improver';
+Beastx.DistanceCalculator.prototype.init = function() {
+    this.scriptName = 'Distance Calculator';
 }

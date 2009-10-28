@@ -1,13 +1,13 @@
 // ==UserScript==
-// @name                  Alliance View Improver
+// @name                  Favorite Targets
 // @version               0.1
 // @author                Beastx
 //
 // @history                0.1 Initial release
 // ==/UserScript==
 
-Beastx.AllianceViewImprover = function() {};
+Beastx.FavoriteTargets = function() {};
 
-Beastx.AllianceViewImprover.prototype.init = function() {
-    this.scriptName = 'Alliance View Improver';
+Beastx.FavoriteTargets.prototype.init = function() {
+    this.scriptName = 'Favorite Targets';
 }

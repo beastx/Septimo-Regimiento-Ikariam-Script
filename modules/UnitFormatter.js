@@ -1,13 +1,13 @@
 // ==UserScript==
-// @name                  Alliance View Improver
+// @name                  Unit Formatter
 // @version               0.1
 // @author                Beastx
 //
 // @history                0.1 Initial release
 // ==/UserScript==
 
-Beastx.AllianceViewImprover = function() {};
+Beastx.UnitFormatter = function() {};
 
-Beastx.AllianceViewImprover.prototype.init = function() {
-    this.scriptName = 'Alliance View Improver';
+Beastx.UnitFormatter.prototype.init = function() {
+    this.scriptName = 'Unit Formatter';
 }

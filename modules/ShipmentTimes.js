@@ -1,13 +1,13 @@
 // ==UserScript==
-// @name                  Donations Page Helper
+// @name                  Shipment Times
 // @version               0.1
 // @author                Beastx
 //
 // @history                0.1 Initial release
 // ==/UserScript==
 
-Beastx.DonationsPageHelper = function() {};
+Beastx.ShipmentTimes = function() {};
 
-Beastx.DonationsPageHelper.prototype.init = function() {
-    this.scriptName = 'Donations Page Helper';
+Beastx.ShipmentTimes.prototype.init = function() {
+    this.scriptName = 'Shipment Times';
 }

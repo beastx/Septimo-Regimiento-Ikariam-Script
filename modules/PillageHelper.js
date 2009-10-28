@@ -1,13 +1,13 @@
 // ==UserScript==
-// @name                  Alliance View Improver
+// @name                  Pillage Helper
 // @version               0.1
 // @author                Beastx
 //
 // @history                0.1 Initial release
 // ==/UserScript==
 
-Beastx.AllianceViewImprover = function() {};
+Beastx.PillageHelper = function() {};
 
-Beastx.AllianceViewImprover.prototype.init = function() {
-    this.scriptName = 'Alliance View Improver';
+Beastx.PillageHelper.prototype.init = function() {
+    this.scriptName = 'Pillage Helper';
 }

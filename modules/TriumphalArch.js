@@ -1,13 +1,13 @@
 // ==UserScript==
-// @name                  Alliance View Improver
+// @name                  Triumphal Arch
 // @version               0.1
 // @author                Beastx
 //
 // @history                0.1 Initial release
 // ==/UserScript==
 
-Beastx.AllianceViewImprover = function() {};
+Beastx.TriumphalArch = function() {};
 
-Beastx.AllianceViewImprover.prototype.init = function() {
-    this.scriptName = 'Alliance View Improver';
+Beastx.TriumphalArch.prototype.init = function() {
+    this.scriptName = 'Triumphal Arch';
 }
