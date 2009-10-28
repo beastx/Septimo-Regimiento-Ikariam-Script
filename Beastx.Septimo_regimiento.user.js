@@ -7,7 +7,6 @@
 // @require               http://ikariam.beastx/tools/userScripts/requires/Json.js
 // @require               http://ikariam.beastx/tools/userScripts/requires/VAR.js
 // @require               http://ikariam.beastx/tools/userScripts/requires/DOM.js
-// @require               http://ikariam.beastx/tools/userScripts/requires/IkaTools.js
 // @require               http://ikariam.beastx/tools/userScripts/requires/Beastx.js
 // @require               http://ikariam.beastx/tools/userScripts/requires/ScriptUpdater.js
 
@@ -16,25 +15,45 @@
 // @require               http://ikariam.beastx/tools/userScripts/requires/FloatingPopup.js
 // @require               http://ikariam.beastx/tools/userScripts/requires/TabManager.js
 
-// @require               http://ikariam.beastx/tools/userScripts/Beastx.ThinViews.user.js
-// @require               http://ikariam.beastx/tools/userScripts/Beastx.ScrollbarRemover.user.js
-// @require               http://ikariam.beastx/tools/userScripts/Beastx.DataSaver.user.js
-// @require               http://ikariam.beastx/tools/userScripts/Beastx.AllianceViewImprover.user.js
-// @require               http://ikariam.beastx/tools/userScripts/Beastx.AlliedOnlineAdvisor.user.js
-// @require               http://ikariam.beastx/tools/userScripts/Beastx.GeneralViewPageCleaner.user.js
-// @require               http://ikariam.beastx/tools/userScripts/Beastx.InlineScore.user.js
-// @require               http://ikariam.beastx/tools/userScripts/Beastx.MessageManager.user.js
-// @require               http://ikariam.beastx/tools/userScripts/Beastx.OurDeployedCitiesCleaner.user.js
-// @require               http://ikariam.beastx/tools/userScripts/Beastx.ShipMovementsViewImprover.user.js
-// @require               http://ikariam.beastx/tools/userScripts/Beastx.TransportResourcesHelper.user.js
-// @require               http://ikariam.beastx/tools/userScripts/Beastx.UpgradeWatcher.user.js
+// @require               http://ikariam.beastx/tools/userScripts/ikariam/IkaTools.js
+// @require               http://ikariam.beastx/tools/userScripts/ikariam/Polis.js
+// @require               http://ikariam.beastx/tools/userScripts/ikariam/Building.js
+// @require               http://ikariam.beastx/tools/userScripts/ikariam/Island.js
+// @require               http://ikariam.beastx/tools/userScripts/ikariam/Player.js
+// @require               http://ikariam.beastx/tools/userScripts/ikariam/Alliance.js
 
-// @require               http://ikariam.beastx/tools/userScripts/Beastx.TopMenu.user.js
-// @require               http://ikariam.beastx/tools/userScripts/Beastx.OptionsPage.user.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/AllianceMap.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/AllianceViewImprover.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/AlliedOnlineAdvisor.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/CombatConverter.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/DataSaver.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/DistanceCalculator.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/DonationsPageHelper.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/Embassytools.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/EmpireBoard.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/FavoriteTargets.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/GeneralViewPageCleaner.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/InlineScore.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/LibraryImprovements.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/MessageManager.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/OurDeployedCitiesCleaner.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/PillageHelper.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/ScrollbarRemover.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/ShipmentTimes.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/ShipMovementsViewImprover.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/ThinViews.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/TransportResourcesHelper.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/TriumphalArch.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/UnitFormatter.js
+// @require               http://ikariam.beastx/tools/userScripts/modules/UpgradeWatcher.js
+
+// @require               http://ikariam.beastx/tools/userScripts/TopMenu.js
+// @require               http://ikariam.beastx/tools/userScripts/OptionsPage.js
 
 // @version               0.3
 // @author                Beastx
 //
+// @history                0.3 reorganice all requirements into folders
 // @history                0.3 Fixed update message when user run the script the first time and have the newest version already
 // @history                0.3 Go to options page direclty when script is installed
 // @history                0.2 Several Improvements
