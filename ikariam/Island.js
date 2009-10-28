@@ -9,11 +9,18 @@
 Beastx.IslandObject = function() {};
 
 Beastx.IslandObject.prototype.init = function(id) {
+    this.scriptName = 'Island Object';
     this.postUrl = Beastx.Config.postUrl;
-    this.serverClassName = 'island';
+    this.serverClassName = 'Island';
     
     this.id = id ? id : 0; // 0 value is a new island objct
-    this.scriptName = 'Island Object';
+    this.name = null;
+    this.xPos = 0;
+    this.yPos = 0;
+    this.wonderId = 0;
+    this.resourceTypeId = 0;
+    this.woodLevel = 0;
+    this.players = [];
 }
 
 Beastx.IslandObject.prototype.getId = function() {
@@ -28,11 +35,25 @@ Beastx.IslandObject.prototype.clone = function() {
 
 Beastx.IslandObject.prototype.setData = function(newData) {
     this.id = newData.id ? newData.id : 0;
+    this.name = newData.name ? newData.name : null;
+    this.xPos = newData.xPos ? newData.xPos : 0;
+    this.yPos = newData.yPos ? newData.yPos : 0;
+    this.wonderId = newData.wonderId ? newData.wonderId : 0;
+    this.resourceTypeId = newData.resourceTypeId ? newData.resourceTypeId : 0;
+    this.woodLevel = newData.woodLevel ? newData.woodLevel : 0;
+    this.players = newData.players ? newData.players : [];
 }
 
 Beastx.IslandObject.prototype.getData = function() {
     return {
-        id: this.id
+        id: this.id,
+        name: this.name,
+        xPos: this.xPos,
+        yPos: this.yPos,
+        wonderId: this.wonderId,
+        resourceTypeId: this.resourceTypeId,
+        woodLevel: this.woodLevel,
+        players: this.players
     }
 }
 

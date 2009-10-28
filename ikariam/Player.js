@@ -9,11 +9,20 @@
 Beastx.PlayerObject = function() {};
 
 Beastx.PlayerObject.prototype.init = function(id) {
+    this.scriptName = 'Player Object';
     this.postUrl = Beastx.Config.postUrl;
-    this.serverClassName = 'player';
+    this.serverClassName = 'Player';
     
     this.id = id ? id : 0; // 0 value is a new player objct
-    this.scriptName = 'Player Object';
+    this.name = null;
+    this.allianceId = 0;
+    this.ranking = 0;
+    this.totalPoints = 0;
+    this.armyPoints = 0;
+    this.ofensivePoints = 0;
+    this.defensivePoints = 0;
+    this.roleTypeId = 0;
+    this.cities = [];
 }
 
 Beastx.PlayerObject.prototype.getId = function() {
@@ -28,11 +37,29 @@ Beastx.PlayerObject.prototype.clone = function() {
 
 Beastx.PlayerObject.prototype.setData = function(newData) {
     this.id = newData.id ? newData.id : 0;
+    this.name = newData.name ? newData.name : null;
+    this.allianceId = newData.allianceId ? newData.allianceId : 0;
+    this.ranking = newData.ranking ? newData.ranking : 0;
+    this.totalPoints = newData.totalPoints ? newData.totalPoints : 0;
+    this.armyPoints = newData.armyPoints ? newData.armyPoints : 0;
+    this.ofensivePoints = newData.ofensivePoints ? newData.ofensivePoints : 0;
+    this.defensivePoints = newData.defensivePoints ? newData.defensivePoints : 0;
+    this.roleTypeId = newData.roleTypeId ? newData.roleTypeId : 0;
+    this.cities = newData.cities ? newData.cities : [];
 }
 
 Beastx.PlayerObject.prototype.getData = function() {
     return {
-        id: this.id
+        id: this.id,
+        name: this.name,
+        allianceId: this.allianceId,
+        ranking: this.ranking,
+        totalPoints: this.totalPoints,
+        armyPoints: this.armyPoints,
+        ofensivePoints: this.ofensivePoints,
+        defensivePoints: this.defensivePoints,
+        roleTypeId: this.roleTypeId,
+        cities: this.cities
     }
 }
 

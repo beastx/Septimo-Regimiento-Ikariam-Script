@@ -9,11 +9,16 @@
 Beastx.AllianceObject = function() {};
 
 Beastx.AllianceObject.prototype.init = function(id) {
+    this.scriptName = 'Alliance Object';
     this.postUrl = Beastx.Config.postUrl;
-    this.serverClassName = 'alliance';
+    this.serverClassName = 'Alliance';
     
     this.id = id ? id : 0; // 0 value is a new alliance objct
-    this.scriptName = 'Alliance Object';
+    this.name = null;
+    this.tag = null;
+    this.players =  [];
+    this.totalPoints = 0;
+    this.ranking = 0;
 }
 
 Beastx.AllianceObject.prototype.getId = function() {
@@ -28,11 +33,21 @@ Beastx.AllianceObject.prototype.clone = function() {
 
 Beastx.AllianceObject.prototype.setData = function(newData) {
     this.id = newData.id ? newData.id : 0;
+    this.name = newData.name ? newData.name : null;
+    this.tag = newData.tag ? newData.tag : null;
+    this.players = newData.players ? newData.players : [];
+    this.totalPoints = newData.totalPoints ? newData.totalPoints : 0;
+    this.ranking = newData.ranking ? newData.ranking : 0;
 }
 
 Beastx.AllianceObject.prototype.getData = function() {
     return {
-        id: this.id
+        id: this.id,
+        name: this.name,
+        tag: this.tag,
+        players: this.players,
+        totalPoints: this.totalPoints,
+        ranking: this.ranking
     }
 }
 
