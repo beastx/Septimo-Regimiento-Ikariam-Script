@@ -4,6 +4,8 @@
 // @description        Scripts para la alianza 7mo Regimiento
 // @include               http://*.ikariam.com/*
 
+// @require               http://ikariam.beastx/tools/userScripts/ikariam/IkaTools.js
+
 // @require               http://ikariam.beastx/tools/userScripts/requires/Json.js
 // @require               http://ikariam.beastx/tools/userScripts/requires/VAR.js
 // @require               http://ikariam.beastx/tools/userScripts/requires/DOM.js
@@ -15,7 +17,6 @@
 // @require               http://ikariam.beastx/tools/userScripts/requires/FloatingPopup.js
 // @require               http://ikariam.beastx/tools/userScripts/requires/TabManager.js
 
-// @require               http://ikariam.beastx/tools/userScripts/ikariam/IkaTools.js
 // @require               http://ikariam.beastx/tools/userScripts/ikariam/Polis.js
 // @require               http://ikariam.beastx/tools/userScripts/ikariam/Building.js
 // @require               http://ikariam.beastx/tools/userScripts/ikariam/Island.js
