@@ -13,6 +13,7 @@
 // @version               0.3
 // @author                Beastx
 //
+// @history                0.3 Fixed Problems with click event
 // @history                0.3 Fixed Ally Media Points value
 // @history                0.2 Added animation dots when script is searching
 // @history                0.2 Show 'Sin puntos' msg when number value is 0
@@ -64,7 +65,7 @@ Beastx.InlineScore.prototype.init = function(currentView) {
 
     this.cities = $$('li.city');
     for (var i = 0; i < this.cities.length; i++) {
-        DOM.addListener(this.cities[i].childNodes[5], 'click', DOM.createCaller(this, 'onCityClick'));
+        DOM.addListener(this.cities[i].childNodes[5], 'mouseup', DOM.createCaller(this, 'onCityClick'));
     }
         
     this.informationDiv = $('information');
