@@ -10,9 +10,10 @@
 // @require               http://ikariam.beastx/tools/userScripts/requires/IkaTools.js
 // @require               http://ikariam.beastx/tools/userScripts/requires/ScriptUpdater.js
 
-// @version               0.2
+// @version               0.3
 // @author                Beastx
 //
+// @history                0.3 Fixed Ally Media Points value
 // @history                0.2 Added animation dots when script is searching
 // @history                0.2 Show 'Sin puntos' msg when number value is 0
 // @history                0.2 Added media points alliance score
@@ -244,7 +245,7 @@ Beastx.InlineScore.prototype.formatPointsNumber = function(number) {
     if (number) {
         if (number != '0') {
             var tempFormatedNumber = (number.replace(/,/g, '')/1000) + '';
-            var integerPart = tempFormatedNumber.substring(0, tempFormatedNumber.indexOf('.'));
+            var integerPart = parseInt(tempFormatedNumber.substring(0, tempFormatedNumber.indexOf('.')));
             if (integerPart > 999) {
                 integerPartTemp = (integerPart /1000) + ''
                 integerPart = parseInt(integerPartTemp) + '';
@@ -390,7 +391,7 @@ Beastx.InlineScore.prototype.onGetAllianceRequestLoad = function(responseHtmlAsT
     this.updateScoreMsg(this.allyDataElements.ranking, alliancePosition);
     this.updateScoreMsg(this.allyDataElements.totalPoints, this.formatPointsNumber(allianceTotalPoints));
 
-    var mediaPointsAsFormatedString = (((allianceTotalPoints.replace(/,/g, '') / allianceMembers) + '') / 1000 + '').replace('.', ',');
+    var mediaPointsAsFormatedString = ((parseInt(allianceTotalPoints.replace(/,/g, '') / allianceMembers) / 1000) + '').replace(/\./g, ',');
     this.updateScoreMsg(this.allyDataElements.mediaPoints, this.formatPointsNumber(mediaPointsAsFormatedString));
 }
 
