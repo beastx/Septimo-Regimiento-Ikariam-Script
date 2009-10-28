@@ -1,8 +1,5 @@
 // ==UserScript==
 // @name                  Json
-// @namespace       Beastx
-// @description        Json Tools
-// @include               http://*.ikariam.com/*
 // @version               0.1
 // @author                Beastx
 //

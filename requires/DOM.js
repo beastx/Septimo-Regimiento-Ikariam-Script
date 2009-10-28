@@ -1,8 +1,5 @@
 // ==UserScript==
 // @name                  DOM Tools
-// @namespace       Beastx
-// @description        DOM Tools
-// @include               http://*.ikariam.com/*
 // @version               0.1
 // @author                Beastx
 //

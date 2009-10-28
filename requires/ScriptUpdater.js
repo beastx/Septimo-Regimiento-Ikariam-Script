@@ -1,8 +1,5 @@
 // ==UserScript==
 // @name                  Scrip Updater
-// @namespace       Beastx
-// @description        Script Updater
-// @include               http://*.ikariam.com/*
 // @version               0.2
 // @author                Beastx
 //
