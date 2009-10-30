@@ -6,39 +6,39 @@
 // @history                0.1 Initial release
 // ==/UserScript==
 
+
 Beastx = {
     ScriptName: 'Beastx Base Ikariam Script',
     HomePage: 'http://7moreg.beastx.com.ar/herramientas/'
 };
 
-Beastx.log = function(val, title) {
+Beastx.log = function(val, title, panel) {
     if (!Beastx.Config) {
         Beastx.getConfig();
     }
     if (!Beastx.Config.options.debugMode) {
         GM_log(val);
     } else {
-        console.log(val, title ? title : '');
+        if (GM_getValue('logAdded')) {
+            if (!unsafeWindow.Log) {
+                setTimeout(function() { Beastx.log(val, title, panel); });
+            } else {
+                unsafeWindow.Log(val, title, panel);
+            }
+        } else {
+            console.log(val, title ? title : '');
+        };
     }
 };
 
 Beastx.todo = function(val, object) {
-    if (!Beastx.Config) {
-        Beastx.getConfig();
-    }
-    if (Beastx.Config.options.debugMode) {
-        console.info((object && object.scriptName ? object.scriptName + ': ' : '') + val);
-    }
+    Beastx.log(val, object && object.scriptName ? object.scriptName : null, 'todo');
 };
 
 Beastx.init = function(currentVersion) {
     this.currentVersion = currentVersion;
     this.getConfig();
     this.log('Start...');
-    
-    Beastx.log('Current view: ' + IkaTools.getView());
-    Beastx.log('Current cityId: ' + IkaTools.getCurrentCityId());
-    Beastx.log('Ikariam ' + IkaTools.getDomain());
 }
 
 Beastx.getGMValue = function(varname, vardefault) {
@@ -131,5 +131,3 @@ Beastx.Form.prototype.save = function() {
         this.saver.save(value);
     }
 }
-
-IkaTools.init();
