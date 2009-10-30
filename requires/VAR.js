@@ -188,6 +188,14 @@ VAR.forEach = function(list, callback) {
     }
 }
 
+VAR.filter = function(list, callback) {
+    var newList = [];
+    for (var i = 0; i < list.length; ++i) {
+        newList.push(callback(list[i]));
+    }
+    return newList;
+}
+
 VAR.covertStringToCamelCase = function(stringVar) {
     var wordArray = stringVar.split(' ');
     var returnString = '';
@@ -238,3 +246,30 @@ VAR.serializeObject = function(object) {
     return returnString;
 }
 
+
+VAR.addCommas = function(string) {
+    string += '';
+    var x = string.split('.');
+    var x1 = x[0];
+    var x2 = x.length > 1 ? '.' + x[1] : '';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+    }
+    return x1 + x2;
+}
+    
+VAR.formatMilliseconds = function(milliseconds) {
+    return IkaTools.formatSeconds(Math.floor(milliseconds/1000));
+}
+
+VAR.formatSeconds = function(seconds) {
+    var hours = seconds > 3600 ? Math.floor(seconds / 3600) : 0;
+    var minutes = Math.floor((seconds % 3600)/ 60);
+    minutes = (hours > 0 && minutes < 10) ? '0' + minutes.toString() : minutes;
+    seconds = seconds % 60;
+    seconds = seconds < 10 ? '0' + seconds.toString() : seconds;
+    var text = minutes + ':' + seconds;
+    text = hours > 0 ? hours + ':' + text : text;
+    return text;
+}
