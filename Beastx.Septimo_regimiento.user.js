@@ -64,7 +64,35 @@
 
 // ==/UserScript==
 
+if (!GM_getValue('logAdded')) {
+    GM_setValue('logAdded', true);
+    unsafeWindow.LOG = document.createElement('script');
+    unsafeWindow.LOG.setAttribute('src','http://ikariam.beastx/tools/log/log.js');
+    document.body.appendChild(unsafeWindow.LOG);
+    setTimeout(instanceLog);
+}
+
+function instanceLog() {
+    if (unsafeWindow.LOG && unsafeWindow.LOG.ready){
+        unsafeWindow.LOG.logRunner = new unsafeWindow.LOG.LogRunner(document);
+        unsafeWindow.LOG.loaded = true;
+        unsafeWindow.LOG.setTypeName(IkariamTools, 'ikatools');
+        unsafeWindow.LOG.setTypeName(Beastx.ResourceObject, 'Beastx.ResourceObject');
+        unsafeWindow.LOG.setTypeName(Beastx.BuildingObject, 'Beastx.BuildingObject');
+        unsafeWindow.LOG.setTypeName(Beastx.PlayerObject, 'Beastx.PlayerObject');
+        unsafeWindow.LOG.setTypeName(Beastx.CityObject, 'Beastx.CityObject');
+    } else {
+        setTimeout(instanceLog);
+    }
+}
+
+unsafeWindow.onunload = function() {
+    GM_setValue('logAdded', false);
+}
+
 Beastx.init('0.2');
+
+IkaTools = New(IkariamTools);
 
 var actualView = IkaTools.getView();
 
@@ -125,7 +153,6 @@ if (actualView == 'login') {
     }
     
 };
-
 
 var scriptUpdater = New(ScriptUpdater, [ 'Beastx.Septimo_regimiento.user.js', '0.3', true ]);
 scriptUpdater.check();
