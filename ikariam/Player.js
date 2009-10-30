@@ -36,16 +36,16 @@ Beastx.PlayerObject.prototype.clone = function() {
 }
 
 Beastx.PlayerObject.prototype.setData = function(newData) {
-    this.id = newData.id ? newData.id : 0;
-    this.name = newData.name ? newData.name : null;
-    this.allianceId = newData.allianceId ? newData.allianceId : 0;
-    this.ranking = newData.ranking ? newData.ranking : 0;
-    this.totalPoints = newData.totalPoints ? newData.totalPoints : 0;
-    this.armyPoints = newData.armyPoints ? newData.armyPoints : 0;
-    this.ofensivePoints = newData.ofensivePoints ? newData.ofensivePoints : 0;
-    this.defensivePoints = newData.defensivePoints ? newData.defensivePoints : 0;
-    this.roleTypeId = newData.roleTypeId ? newData.roleTypeId : 0;
-    this.cities = newData.cities ? newData.cities : [];
+    this.id = newData.id ? newData.id : this.id;
+    this.name = newData.name ? newData.name : this.name;
+    this.allianceId = newData.allianceId ? newData.allianceId : this.allianceId;
+    this.ranking = newData.ranking ? newData.ranking : this.ranking;
+    this.totalPoints = newData.totalPoints ? newData.totalPoints : this.totalPoints;
+    this.armyPoints = newData.armyPoints ? newData.armyPoints : this.armyPoints;
+    this.ofensivePoints = newData.ofensivePoints ? newData.ofensivePoints : this.ofensivePoints;
+    this.defensivePoints = newData.defensivePoints ? newData.defensivePoints : this.defensivePoints;
+    this.roleTypeId = newData.roleTypeId ? newData.roleTypeId : this.roleTypeId;
+    this.cities = newData.cities ? newData.cities : this.cities;
 }
 
 Beastx.PlayerObject.prototype.getData = function() {
@@ -58,8 +58,7 @@ Beastx.PlayerObject.prototype.getData = function() {
         armyPoints: this.armyPoints,
         ofensivePoints: this.ofensivePoints,
         defensivePoints: this.defensivePoints,
-        roleTypeId: this.roleTypeId,
-        cities: this.cities
+        roleTypeId: this.roleTypeId
     }
 }
 
@@ -73,4 +72,8 @@ Beastx.PlayerObject.prototype.sendInfoToServer = function(onLoadCallback) {
             }
         }
     );
+}
+
+Beastx.PlayerObject.prototype.toString = function() {
+    return this.name ? this.name : 'PlayerObject';
 }
