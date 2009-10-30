@@ -320,7 +320,6 @@ IkariamTools.prototype.updateData = function() {
     this.loadPlayerData();
     switch(this.getView()) {
         case 'options':
-            Beastx.log('sacar info del player');
             this.getPlayerData();
             break;
         case 'city':
@@ -394,6 +393,51 @@ IkariamTools.prototype.viewIsBuilding = function() {
 IkariamTools.prototype.getCurrentCity = function() {
     return this.getCityById(this.getCurrentCityId());
 }
+
+IkariamTools.prototype.goTo = function(url, cityId) {
+    document.body.style.cursor = "wait";
+    var loc = url.match(/^\//) ? 'http://' + this.getDomain() + url : url;
+    if (typeof(cityId) != 'undefined' && cityId != this.getCurrentCityId()) {
+        this.changeCity(cityId);
+    }
+    unsafeWindow.document.location = loc;
+}
+
+IkariamTools.prototype.changeCity = function(city_id) {
+    var postdata = "";
+    var elems = document.getElementById('changeCityForm').getElementsByTagName('fieldset')[0].getElementsByTagName('input');
+    for(var i = 0; i < elems.length; i++) {
+        postdata += "&" + elems[i].name + "=" + elems[i].value;
+    }
+    postdata = postdata + "&cityId="+city_id+"&view=city";
+    var xmlhttp;
+    if (window.XMLHttpRequest) {
+        xmlhttp = new XMLHttpRequest();
+    }
+    xmlhttp.open('POST','http://' + location.host + '/index.php',false);
+    xmlhttp.setRequestHeader('User-agent',window.navigator.userAgent);
+    xmlhttp.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    xmlhttp.setRequestHeader('Accept','application/atom+xml,application/xml,text/xml');
+    xmlhttp.setRequestHeader('Referer','http://' + location.host + '/index.php');
+    xmlhttp.setRequestHeader('Cookie',document.cookie);
+    xmlhttp.overrideMimeType('text/javascript; charset='+document.characterSet);
+    xmlhttp.send(postdata);
+    var node = this.getDocument(xmlhttp.responseText);
+    return node.getElementsByTagName("input")[2].value;
+}
+
+IkariamTools.prototype.getDocument = function(responseText) {
+   var html = document.createElement("html");
+   html.innerHTML = responseText;
+   var response = document.implementation.createDocument("", "", null);
+   response.appendChild(html);
+   return response;
+}
+
+
+
+
+
     
     
     //~ getMovements:function() {
@@ -408,50 +452,14 @@ IkariamTools.prototype.getCurrentCity = function() {
         //~ });
     //~ },
     
-    //~ goTo:function(url, cityId) {
-        //~ document.body.style.cursor = "wait";
-        //~ var loc = url.match(/^\//) ? 'http://' + IkaTools.getDomain() + url : url;
-        //~ if(typeof(cityId) != 'undefined' && cityId != IkaTools.getCurrentCityId()) {
-            //~ IkaTools.changeCity(cityId);
-        //~ }
-        //~ unsafeWindow.document.location = loc;
-    //~ },
+
 
 //~ }
 
 
 
 
-//~ IkaTools.changeCity = function(city_id) {
-    //~ var postdata = "";
-    //~ var elems = document.getElementById('changeCityForm').getElementsByTagName('fieldset')[0].getElementsByTagName('input');
-    //~ for(var i = 0; i < elems.length; i++) {
-        //~ postdata += "&" + elems[i].name + "=" + elems[i].value;
-    //~ }
-    //~ postdata = postdata + "&cityId="+city_id+"&view=city";
-    //~ var xmlhttp;
-    //~ if(window.XMLHttpRequest){
-        //~ xmlhttp = new XMLHttpRequest();
-    //~ }
-    //~ xmlhttp.open('POST','http://' + location.host + '/index.php',false);
-    //~ xmlhttp.setRequestHeader('User-agent',window.navigator.userAgent);
-    //~ xmlhttp.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-    //~ xmlhttp.setRequestHeader('Accept','application/atom+xml,application/xml,text/xml');
-    //~ xmlhttp.setRequestHeader('Referer','http://' + location.host + '/index.php');
-    //~ xmlhttp.setRequestHeader('Cookie',document.cookie);
-    //~ xmlhttp.overrideMimeType('text/javascript; charset='+document.characterSet);
-    //~ xmlhttp.send(postdata);
-    //~ var node = getDocument(xmlhttp.responseText);
-    //~ return node.getElementsByTagName("input")[2].value;
-//~ }
 
-//~ function getDocument(responseText) {
-   //~ var html = document.createElement("html");
-   //~ html.innerHTML = responseText;
-   //~ var response = document.implementation.createDocument("", "", null);
-   //~ response.appendChild(html);
-   //~ return response;
-//~ }
 
 
 
