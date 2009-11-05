@@ -32,7 +32,7 @@ Beastx.TopMenu.prototype.create = function() {
     ikariamOldOptions += '<li class="serverTime"><a href="http://board.ar.ikariam.com/" target="_blank"><span id="servertime" class="textLabel"></span></a></li>';
     ikariamOldOptions += '<li class="serverTime"><a href="http://s2.ar.ikariam.com/index.php?action=loginAvatar&function=logout"><span id="servertime" class="textLabel">Salir</span></a></li>';
 
-    ikariamOldOptions += '<li class="serverTime"><a><span id="spanServertime" class="textLabel">' + unsafeWindow['obj_ServerTime'].textContent + '</span></a></li>';
+    ikariamOldOptions += '<li class="serverTime"><a><span id="spanServertime" class="textLabel"></span></a></li>';
     ikariamOldOptions += '</ul>';
 
     this.element = document.createElement('div');
@@ -45,7 +45,7 @@ Beastx.TopMenu.prototype.append = function() {
 }
 
 Beastx.TopMenu.prototype.updateTime = function() {
-    $('spanServertime').innerHTML = unsafeWindow['obj_ServerTime'].textContent;
+    $('spanServertime').innerHTML = $('servertime').textContent;
 }
 
 Beastx.TopMenu.prototype.addStyles = function() {
