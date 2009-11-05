@@ -193,6 +193,60 @@ Beastx.OptionsPage.prototype.createAndAppendOptionBlock = function() {
                 this.checkbox('empireBoard'),
                 'Este modulo incluye los script Empire Board y Empire Board Graphic AddOn',
                 true
+            ),
+            this.optionBoxRow(
+                'Beastx - Distance Calculator',
+                this.checkbox('distanceCalculator'),
+                'Este modulo nos agrega un cuadro en la vista de isla diciendonos los tiempos que demora cada tipo de unidad en llegar desde nuestra polis actual a la isla que estamos viendo.',
+                true
+            ),
+            this.optionBoxRow(
+                'Beastx - Library Improvements',
+                this.checkbox('libraryImprovements'),
+                'Este modulo mejora la vista de biblioteca, mostrandonos que nos provee y cuanto tiempo nos demora cada investigacion en la lista, en vez de simplemente el nombre de la investigacion.',
+                true
+            ),
+            this.optionBoxRow(
+                'Beastx - Message Manager',
+                this.checkbox('messageManager'),
+                'Este modulo hace que el envio de mensajes sea mucho mas organizado, dandonos tipos de mensajes a enviar, y agregando opciones de reenviar a otra persona, etc.',
+                true
+            ),
+            this.optionBoxRow(
+                'Beastx - Shipment Times',
+                this.checkbox('shipmentTimes'),
+                'Este modulo nos el dato de cuanto tiempo tardara un envio desde nuestro puerto, teniendo en cuenta el tiempo de carga segun nuestro nivel de puerto y el tiempo de viaje segun la polis de destino.',
+                true
+            ),
+            this.optionBoxRow(
+                'Beastx - Research Advisor Helper',
+                this.checkbox('researchAdvisorHelper'),
+                'Este modulo nos agrega botones y tablas con datos que nos ayudaran en la tarea de manejar los investigadores.',
+                true
+            ),
+            this.optionBoxRow(
+                'Beastx - ResearchPointsHelper',
+                this.checkbox('researchPointsHelper'),
+                'Este modulo....',
+                true
+            ),
+            this.optionBoxRow(
+                'Beastx - GroupMessenger',
+                this.checkbox('groupMessenger'),
+                'Este modulo.....',
+                true
+            ),
+            this.optionBoxRow(
+                'Beastx - ArribalTimesImprover',
+                this.checkbox('arribalTimesImprover'),
+                'Este modulo....',
+                true
+            ),
+            this.optionBoxRow(
+                'Beastx - CombatLayoutHelper',
+                this.checkbox('combatLayoutHelper'),
+                'Este modulo....',
+                true
             )
         ]),
         this.optionBoxBlock('Debug', [
