@@ -191,7 +191,10 @@ VAR.forEach = function(list, callback) {
 VAR.filter = function(list, callback) {
     var newList = [];
     for (var i = 0; i < list.length; ++i) {
-        newList.push(callback(list[i]));
+        var itemFiltered = callback(list[i]);
+        if (itemFiltered !== null) {
+            newList.push(itemFiltered);
+        }
     }
     return newList;
 }
