@@ -14,248 +14,138 @@ IkariamTools = function() {};
 IkariamTools.prototype.init = function() {
     this.version = 1;
     this.debugMode =  Beastx.Config.options.debugMode;
-    this.data = {};
-    this.ikariam = unsafeWindow.IKARIAM;
-    this.resourceNames = { 1: 'wine', 2: 'marble', 3: 'sulfur', 4: 'glass', 5: 'wood' };
-    this.buildingNames = { 1: 'townHall', 2: 'academy', 3: 'port', 4: 'shipyard', 5: 'warehouse', 6: 'wall', 7: 'tavern', 8: 'museum', 9: 'palace', 10: 'palaceColony', 11: 'embassy', 12: 'safehouse', 13: 'barracks', 14: 'workshop', 15: 'carpentering', 16: 'forester', 17: 'stonemason', 18: 'winegrower', 19: 'alchemist', 20: 'architect', 21: 'vineyard', 22: 'fireworker', 23: 'optician', 24: 'glassblowing' };
-    this.updateData();
+    this.postUrl = Beastx.Config.postUrl;
+    this.cities = New(Beastx.CitiesList);
+    this.player = New(Beastx.PlayerObject);
+    this.alliance = New(Beastx.AllianceObject);
+    
+    this.data = {
+        ikariam: { domain: document.domain, lang: '', version: '' },
+        resourceNames: { 1: 'wine', 2: 'marble', 3: 'sulfur', 4: 'glass', 5: 'wood' },
+        buildingNames: { 1: 'townHall', 2: 'academy', 3: 'port', 4: 'shipyard', 5: 'warehouse', 6: 'wall', 7: 'tavern', 8: 'museum', 9: 'palace', 10: 'palaceColony', 11: 'embassy', 12: 'safehouse', 13: 'barracks', 14: 'workshop', 15: 'carpentering', 16: 'forester', 17: 'stonemason', 18: 'winegrower', 19: 'alchemist', 20: 'architect', 21: 'vineyard', 22: 'fireworker', 23: 'optician', 24: 'glassblowing', 25: 'temple' }
+    };
+    
+    var me = this;
+    unsafeWindow.onbeforeunload = function(event) { me.saveData(); }
+    
     Beastx.log(this, null, 'ikatools');
 };
 
-IkariamTools.prototype.toString = function() {
-    return 'IkariamTools:' + this.getView() + 'View'; 
-}
-
-IkariamTools.prototype.getView = function() {
-    return this.ikariam.phpSet.currentView; 
-}
-
-IkariamTools.prototype.getVal = function(varName) {
-    return Beastx.getGMValue('IkariamTools_' + varName);
-}
-
-IkariamTools.prototype.setVal = function(varName, varValue) {
-    Beastx.setGMValue('IkariamTools_' + varName, varValue);
-}
-
-IkariamTools.prototype.clearCities = function() {
-    this.setVal('cities', new Array());
-}
-
-IkariamTools.prototype.addInfoBox = function(title, contentDiv, beforeElement) {
-    var box = document.createElement('div');
-    box.className = 'dynamic';
-    box.innerHTML = '<h3 class="header">Beastx: ' + title + '</h3>';
-    contentDiv.className = "content";
-    box.appendChild(contentDiv);
-    var footer = document.createElement('div');
-    footer.className = "footer";
-    box.appendChild(footer);
-    document.getElementById('mainview').parentNode.insertBefore(box, beforeElement ? beforeElement : document.getElementById('mainview'));
-}
-
-IkariamTools.prototype.addOptionBlock = function(title, content) {
-    var optionBox = document.createElement('div');
-    var contentRandId = 'contentId_' + parseInt(Math.random(999999)*10000000);
-    optionBox.innerHTML = '<div class="contentBox01h"><h3 class="header"><span class="textLabel">' + title + '</span></h3><div class="content" id="' + contentRandId + '"></div><div class="footer"/></div></div>';
-    var referenceDiv = $$('#mainview .contentBox01h')[1]
-    referenceDiv.parentNode.insertBefore(optionBox, referenceDiv);
-    var container = $(contentRandId);
-    container.appendChild(content);
-}
-
-IkariamTools.prototype.getDomain = function() {
-    return document.domain;
-}
-
-IkariamTools.prototype.getRemoteDocument = function(url, callback) {
-    GM_xmlhttpRequest ({
-        method: "GET",
-        url: url,
-        headers: {"User-agent": navigator.userAgent, "Accept": "text/html"},
-        onload: function (response){
-            var html = document.createElement("html");
-            html.innerHTML = response.responseText;
-            var response = document.implementation.createDocument("", "", null);
-            response.appendChild(html);
-            callback(response);
+IkariamTools.prototype.sendInfoToServer = function(serverClassName, data, onLoadCallback) {
+    DOM.post(
+        this.postUrl,
+        { className: serverClassName, action: 'save', params: data },
+        function(response) {
+            if (onLoadCallback) {
+                onLoadCallback(response);
+            }
         }
-    });
+    );
 }
 
-IkariamTools.prototype.saveCities = function() {
-    var citiesData = [];
-    for (var i = 0; i < this.data.cities.length; ++i) {
-        this.setVal('cities_' + this.data.cities[i].getId(), this.data.cities[i].getData());
-    }
-}
+IkariamTools.prototype.loadData = function() {
+    this.cities.loadCitiesData();
+    this.player.loadData();
 
-IkariamTools.prototype.loadCitiesData = function() {
-    var citiesElements = this.cleanCitiesList($$('#citySelect option.coords'));
-    this.data.cities = VAR.filter(citiesElements, DOM.createCaller(this, 'getCityObject'));
-}
-
-IkariamTools.prototype.cleanCitiesList = function(cities) {
-    var returnCities = [];
-    for (var i = 0; i < cities.length; ++i) {
-        if (!DOM.hasClass(cities[i], 'deployedCities')) {
-            returnCities.push(cities[i]);
-        }
-    }
-    return returnCities;
-}
-
-IkariamTools.prototype.getCityById = function(cityId) {
-    for (var i = 0; i < this.data.cities.length; ++i) {
-        if (this.data.cities[i].id == cityId) {
-            return this.data.cities[i];
-        }
-    }
-    return null;
-}
-
-IkariamTools.prototype.getCityObject = function(cityElement) {
-    var city = New(Beastx.CityObject, [ cityElement.value ]);
-    city.setData({ name: cityElement.innerHTML.split(']')[1].trim() });
-    city.setData({ resourceTypeId: this.getCityResourceTypeIdFromComboTitle(cityElement.title) });
-    if (city.getId() == this.getCurrentCityId() && this.getView() == 'city') {
-        var cityPlayerId = 0;
-        var cityLevel = 0;
-        var cityLevelElement = $$('li.citylevel')[0];
-        if (cityLevelElement) {
-            cityLevel = cityLevelElement.childNodes[1].nodeValue;
-        }
-        var tempPopulation = $$('#cityResources ul.resources li #value_inhabitants')[0].textContent;
-        var tempPopulationParts = tempPopulation.split(' ');
-        city.setData({
-            islandId: this.getCurrentIslandId(),
-            population: parseInt(tempPopulationParts[0].replace(',', '')),
-            maxPopulation: parseInt(tempPopulationParts[1].replace(',', '').replace('(', '').replace(')', '')),
-            freeWorkers: parseInt(tempPopulation.match(/^\d+/)),
-            playerId: cityPlayerId,
-            level: cityLevel,
-            resources: this.getCurrentCityResourceObjects(),
-            buildings: this.getCurrentCityBuildingsObjects()
-        });
+    var currentView = this.getView();
+    if (this[currentView + 'View']) {
+        this[currentView + 'View']();
     } else {
-        var tempCitiesData = this.getVal('cities_' + city.getId());
-        if (tempCitiesData) {
-            city.setData({
-                islandId: tempCitiesData.islandId,
-                population: tempCitiesData.population,
-                maxPopulation: tempCitiesData.maxPopulation,
-                freeWorkers: tempCitiesData.freeWorkers,
-                playerId: tempCitiesData.playerId,
-                level: tempCitiesData.level,
-                production: tempCitiesData.production,
-                resources: this.getResourcesObjectsFromSavedData(tempCitiesData.resources),
-                buildings: this.getBuildingsObjectsFromSavedData(tempCitiesData.buildings)
+        Beastx.log('implementar esta vista: ' + currentView);
+    }
+}
+
+IkariamTools.prototype.saveData = function(event) {
+    this.cities.saveCities();
+    this.player.saveData();
+}
+
+
+/***************************************************************
+*************** Several Views Data loaders ******************
+***************************************************************/
+
+IkariamTools.prototype.diplomacyAdvisorAllyView = function() {
+    function getPlayerObjectFromElement(element) {
+        if (element.childNodes[11].childNodes[0].childNodes[0]) {
+            var playerObj = New(Beastx.PlayerObject, [ getQueryString('receiverId', element.childNodes[11].childNodes[0].childNodes[0].href) ])
+            playerObj.setData({
+                name: element.childNodes[3].childNodes[0].textContent
             });
+            return playerObj;
         }
+        return null;
     }
-    return city;
-}
-
-IkariamTools.prototype.getResourcesObjectsFromSavedData = function(savedData) {
-    var cityResources = [];
-    for (var i = 0; i < savedData.length; ++i) {
-        resource = New(Beastx.ResourceObject, [ savedData[i].typeId ]);
-        cityResources.push(resource);
-        resource.setData({
-            ammount: savedData[i].ammount,
-            maxAmmount: savedData[i].maxAmmount,
-            islandId: savedData[i].islandId
-        });
-    }
-    return cityResources;
-}
-
-IkariamTools.prototype.getBuildingsObjectsFromSavedData = function(savedData) {
-    var cityBuildings = [];
-    for (var i = 0; i < savedData.length; ++i) {
-        var building = New(Beastx.BuildingObject);
-        building.setData({
-            cityId: savedData[i].cityId,
-            neededResourcesToUpdate: IkariamTools.BUILDINGSRESOURCES[savedData[i].typeName],
-            level: savedData[i].level,
-            buildingTypeId: savedData[i].buildingTypeId
-        });
-        cityBuildings.push(building);
-    }
-    return cityBuildings;
-}
-
-IkariamTools.prototype.getBuildingObject = function(buildingElement) {
-    var building = New(Beastx.BuildingObject);
-    building.setData({
-        cityId: this.getCurrentCityId(),
-        neededResourcesToUpdate: IkariamTools.BUILDINGSRESOURCES[buildingElement.className],
-        level: buildingElement.childNodes[3].title.substr(buildingElement.childNodes[3].title.lastIndexOf(' ') + 1),
-        buildingTypeId: this.getBuildingTypeIdFromBuildingName(buildingElement.className)
+    var tableInfo = $('allyinfo');
+    var pointsInfo = $('allyinfo').childNodes[1].childNodes[7].childNodes[2].childNodes[0].textContent;
+    
+    var players = VAR.filter($$('table#memberList tbody tr'), getPlayerObjectFromElement);
+    players.push(this.player);
+    
+    this.alliance.setData({
+        id: getQueryString('allyId', $('allyinfo').childNodes[1].childNodes[15].childNodes[2].childNodes[0].href),
+        name: $('allyinfo').childNodes[1].childNodes[1].childNodes[2].childNodes[0].textContent,
+        tag: '',
+        players: players,
+        totalPoints: parseInt(pointsInfo.split(' ')[1].replace('(', '').replace(')', '').replace(/,/g, '') / 100),
+        ranking: pointsInfo.split(' ')[0]
     });
-    return building;
+    
+    Beastx.todo('controlar los miembros nuevos y los miembros que no estan mas en la alianza', this);
 }
 
-IkariamTools.prototype.getBuildingTypeIdFromBuildingName = function(buildingName) {
-    for (var id in this.buildingNames) {
-        var type = this.buildingNames[id];
-        if (type == buildingName) {
-            return id;
-        }
+IkariamTools.prototype.optionsView = function() {
+    this.player.setData({
+        id: $$('div#options_debug table tr')[0].childNodes[3].childNodes[0].nodeValue.trim(),
+        name: $$('div#options_userData input.textfield')[0].value,
+        cities: this.cities
+    });
+    this.player.saveData();
+}
+
+IkariamTools.prototype.cityView = function() {
+    var cities = this.cities.getAllCities();
+    for (var i = 0; i < cities.length; ++i) {
+        Beastx.log(cities[i].getAllAvailableResources(), cities[i].getName());
+        Beastx.log(cities[i].getAllAvailableBuildingsForUpgrade(), cities[i].getName());
     }
-    return 0;
 }
 
-IkariamTools.prototype.getCityResourceTypeIdFromComboTitle = function(title) {
-    var tempTitle = title.substr(title.lastIndexOf(' ') + 1);
-    var tempHashLangTitles = {
-        'Vino': 'wine',
-        'Mármol': 'marble',
-        'Azufre': 'sulfur',
-        'Cristal': 'glass'
-    };
-    for (var id in this.resourceNames) {
-        var type = this.resourceNames[id];
-        if (type == tempHashLangTitles[tempTitle]) {
-            return id;
-        }
+IkariamTools.prototype.resourceView = function() {
+    Beastx.log('agregar un listener al boton de confirmar y actualizar los datos de production de la city: ' + this.cities.getCurrentCity().getName())
+}
+
+IkariamTools.prototype.tradegoodView = function() {
+    Beastx.log('agregar un listener al boton de confirmar y actualizar los datos de production de la city: ' + this.cities.getCurrentCity().getName())
+}
+
+IkariamTools.prototype.islandView = function() {
+    Beastx.log('obetener la lista de ciudades, y sus players y sus miembros')
+}
+
+IkariamTools.prototype.tavernView = function() {
+    this.cities.getCurrentCity().setData({
+        wineConsumption: parseInt($('#wineAmount option:selected').text().match(/^\d+/).toString().replace(/(,|\.)/g, ''))
+    });
+}
+
+IkariamTools.prototype.financesView = function() {
+    Beastx.log('leer los datos y actualizar los datos de production de oro de todas las cities')
+    var rows = $$('#balance tr');
+    var cities = this.cities.getAll();
+    for (var i = 0; i < cities.length; ++i) {
+        var cityName = rows[i +1].childNodes[1].childNodes[0].textContent.trim();
+        var city = this.cities.getCityByName(cityName);
+        var tempProduction = city.getProduction();
+        tempProduction.goldIncome = parseInt(rows[i +1].childNodes[3].childNodes[0].textContent.trim().replace(',', ''));
+        tempProduction.goldUpkeep = parseInt(rows[i +1].childNodes[5].childNodes[0].textContent.trim().replace(',', ''));
+        tempProduction.goldTotal = parseInt(rows[i +1].childNodes[7].childNodes[0].textContent.trim().replace(',', ''));
+        city.setData({ production: tempProduction });
     }
-    return 0;
 }
 
-IkariamTools.prototype.cleanBuildingList = function(buildings) {
-    var returnBuildings = [];
-    for (var i = 0; i < buildings.length; ++i) {
-        if (VAR.startsWith(buildings[i].id, 'position') && !DOM.hasClass(buildings[i], 'buildingGround')) {
-            returnBuildings.push(buildings[i]);
-        }
-    }
-    return returnBuildings;
-}
-
-IkariamTools.prototype.getCurrentCityBuildingsObjects = function() {
-    var cityBuildings = [];
-    var cityBuildingsElements = this.cleanBuildingList($$('ul#locations li'));
-    return VAR.filter(cityBuildingsElements, DOM.createCaller(this, 'getBuildingObject'));
-}
-
-IkariamTools.prototype.getCurrentCityResourceObjects = function() {
-    var cityResources = [];
-    for (var id in this.resourceNames) {
-        var type = this.resourceNames[id];
-        resource = New(Beastx.ResourceObject, [ id ]);
-        cityResources.push(resource);
-        resource.setData({
-            ammount: parseInt($$('li.' + type)[0].childNodes[2].childNodes[0].nodeValue.replace(',', '')),
-            maxAmmount: parseInt($$('li.' + type)[0].childNodes[4].childNodes[1].nodeValue.replace(',', '')),
-            islandId: this.getCurrentIslandId()
-        });
-    }
-    return cityResources;
-}
-
-IkariamTools.prototype.getCurrentCityProductionData = function() {
-    var city = this.getCurrentCity();
+IkariamTools.prototype.townHallView = function() {
+    var city = this.cities.getCurrentCity();
     var data = {
         goldIncome: null,
         goldUpkeep: null,
@@ -269,135 +159,15 @@ IkariamTools.prototype.getCurrentCityProductionData = function() {
     city.setData({ production: data });
 }
 
-IkariamTools.prototype.savePlayerData = function() {
-    this.setVal('player', this.data.player.getData());
-}
 
-IkariamTools.prototype.loadPlayerData = function() {
-    this.data.player = New(Beastx.PlayerObject, []);
-    var tempDataPlayer = this.getVal('player');
-    if (tempDataPlayer) {
-        this.data.player.setData(tempDataPlayer);
-    }
-    this.data.player.setData({
-        cities: this.data.cities
-    });
-}
+/***************************************************************
+********* Change Url and Selected City Helpers *************
+***************************************************************/
 
-IkariamTools.prototype.getPlayerData = function() {
-    this.data.player.setData({
-        id: $$('div#options_debug table tr')[0].childNodes[3].childNodes[0].nodeValue.trim(),
-        name: $$('div#options_userData input.textfield')[0].value,
-        cities: this.data.cities
-    });
-}
-
-IkariamTools.prototype.getCityByName = function(cityName) {
-    for (var i = 0; i < this.data.cities.length; ++ i) {
-        if (this.data.cities[i].getName() == cityName) {
-            return this.data.cities[i];
-        }
-    }
-    return null;
-}
-
-IkariamTools.prototype.getFinancesData = function() {
-    var rows = $$('#balance tr');
-    for (var i = 0; i < this.data.cities.length; ++i) {
-        var cityName = rows[i +1].childNodes[1].childNodes[0].textContent.trim();
-        var city = this.getCityByName(cityName);
-        var tempProduction = city.getProduction();
-        tempProduction.goldIncome = parseInt(rows[i +1].childNodes[3].childNodes[0].textContent.trim().replace(',', ''));
-        tempProduction.goldUpkeep = parseInt(rows[i +1].childNodes[5].childNodes[0].textContent.trim().replace(',', ''));
-        tempProduction.goldTotal = parseInt(rows[i +1].childNodes[7].childNodes[0].textContent.trim().replace(',', ''));
-        city.setData({ production: tempProduction });
-    }
-}
-
-
-IkariamTools.prototype.updateData = function() {
-    this.loadCitiesData();
-    this.loadPlayerData();
-    switch(this.getView()) {
-        case 'options':
-            this.getPlayerData();
-            break;
-        case 'city':
-            //~ Beastx.log(city.getResourcesMissingForAllBuildings());
-            //~ for (var i = 0; i < this.data.cities.length; ++i) {
-                //~ Beastx.log(this.data.cities[i].getAllAvailableResources());
-                //~ Beastx.log(this.data.cities[i].getAllAvailableBuildingsForUpgrade());
-            //~ }
-            break;
-        case 'townHall':
-            this.getCurrentCityProductionData();
-            break;
-        case 'resource':
-        case 'tradegood':
-            Beastx.log('agregar un listener al boton de confirmar y actualizar los datos de production de la city: ' + this.getCurrentCity().getName())
-            break;
-        case 'finances':
-            Beastx.log('leer los datos y actualizar los datos de production de oro de todas las cities')
-            this.getFinancesData();
-            break;
-        case 'island':
-            Beastx.log('obetener la lista de ciudades, y sus players y sus miembros')
-            break;
-        case 'tavern':
-            this.getCurrentCity().setData({
-                wineConsumption: parseInt($('#wineAmount option:selected').text().match(/^\d+/).toString().replace(/(,|\.)/g, ''))
-            })
-            break;
-        default:
-            Beastx.log('implementar esta vista: ' + this.getView());
-            break;
-    }
-    this.saveCities();
-    this.savePlayerData();
-}
-
-IkariamTools.prototype.getCurrentCityId = function() {
-    if (!this.currentCityId) {
-        this.currentCityId = $('citySelect').value;
-    }
-    return this.currentCityId;
-}
-
-IkariamTools.prototype.getCurrentIslandId = function() {
-    if (!this.currentIslandId) {
-        var link = $$('li.viewIsland a')[0].href; 
-        this.currentIslandId = link.substr(link.indexOf("id=") + 3);
-    }
-    return this.currentIslandId;
-}
-
-IkariamTools.prototype.getCurrentPosition = function() {
-    if (!this.currentPosition) {
-        var tmp = document.location.toString().match(/position=\d+/);
-        this.currentPosition = tmp ? tmp.toString().replace(/position=/, '') : null;
-    }
-    return this.currentPosition;
-}
-
-IkariamTools.prototype.viewIsBuilding = function() {
-    var buildingViews = ['academy', 'alchemist', 'architect', 'barracks', 'branchOffice', 'carpentering', 'embassy', 'fireworker', 'forester', 'glassblowing', 'museum', 'optician', 'palace', 'palaceColony', 'port', 'safehouse', 'shipyard', 'stonemason', 'tavern', 'townHall', 'vineyard', 'wall', 'warehouse', 'winegrower', 'workshop'];
-    var currentView = this.getView();
-    for(i in buildingViews) {
-        if(buildingViews[i] == currentView) {
-            return true;
-        }
-    }    
-    return false;
-}
-
-IkariamTools.prototype.getCurrentCity = function() {
-    return this.getCityById(this.getCurrentCityId());
-}
-
-IkariamTools.prototype.goTo = function(url, cityId) {
+IkariamTools.prototype.goTo = function(view, cityId) {
     document.body.style.cursor = "wait";
-    var loc = url.match(/^\//) ? 'http://' + this.getDomain() + url : url;
-    if (typeof(cityId) != 'undefined' && cityId != this.getCurrentCityId()) {
+    var loc = 'http://' + this.getDomain() + '/index.php?view=' + view;
+    if (typeof(cityId) != 'undefined' && cityId != this.cities.getCurrentCityId()) {
         this.changeCity(cityId);
     }
     unsafeWindow.document.location = loc;
@@ -426,6 +196,57 @@ IkariamTools.prototype.changeCity = function(city_id) {
     return node.getElementsByTagName("input")[2].value;
 }
 
+
+/***************************************************************
+********** Getters for Ikariam Common Values **************
+***************************************************************/
+
+IkariamTools.prototype.getView = function() {
+    return document.body.id; 
+}
+
+IkariamTools.prototype.getDomain = function() {
+    return this.data.ikariam.domain;
+}
+
+IkariamTools.prototype.getBuildingTypeIdFromBuildingName = function(buildingName) {
+    for (var id in this.data.buildingNames) {
+        var type = this.data.buildingNames[id];
+        if (type == buildingName) {
+            return id;
+        }
+    }
+    return 0;
+}
+
+IkariamTools.prototype.getCurrentIslandId = function() {
+    if (!this.currentIslandId) {
+        var link = $$('li.viewIsland a')[0].href; 
+        this.currentIslandId = link.substr(link.indexOf("id=") + 3);
+    }
+    return this.currentIslandId;
+}
+
+
+/***************************************************************
+************** Remote Documents Helpers ******************
+***************************************************************/
+
+IkariamTools.prototype.getRemoteDocument = function(url, callback) {
+    GM_xmlhttpRequest ({
+        method: "GET",
+        url: url,
+        headers: {"User-agent": navigator.userAgent, "Accept": "text/html"},
+        onload: function (response){
+            var html = document.createElement("html");
+            html.innerHTML = response.responseText;
+            var response = document.implementation.createDocument("", "", null);
+            response.appendChild(html);
+            callback(response);
+        }
+    });
+}
+
 IkariamTools.prototype.getDocument = function(responseText) {
    var html = document.createElement("html");
    html.innerHTML = responseText;
@@ -435,183 +256,59 @@ IkariamTools.prototype.getDocument = function(responseText) {
 }
 
 
+/***************************************************************
+************* Getters and Setters GM values*****************
+***************************************************************/
+
+IkariamTools.prototype.getVal = function(varName) {
+    return Beastx.getGMValue('IkariamTools_' + varName);
+}
+
+IkariamTools.prototype.setVal = function(varName, varValue) {
+    Beastx.setGMValue('IkariamTools_' + varName, varValue);
+}
+
+
+/***************************************************************
+***************** Add DOM Blocks Helpers *******************
+***************************************************************/
+
+IkariamTools.prototype.addInfoBox = function(title, contentDiv, beforeElement) {
+    var box = document.createElement('div');
+    box.className = 'dynamic';
+    box.innerHTML = '<h3 class="header">Beastx: ' + title + '</h3>';
+    contentDiv.className = "content";
+    box.appendChild(contentDiv);
+    var footer = document.createElement('div');
+    footer.className = "footer";
+    box.appendChild(footer);
+    document.getElementById('mainview').parentNode.insertBefore(box, beforeElement ? beforeElement : document.getElementById('mainview'));
+}
+
+IkariamTools.prototype.addOptionBlock = function(title, content) {
+    var optionBox = document.createElement('div');
+    var contentRandId = 'contentId_' + parseInt(Math.random(999999)*10000000);
+    optionBox.innerHTML = '<div class="contentBox01h"><h3 class="header"><span class="textLabel">' + title + '</span></h3><div class="content" id="' + contentRandId + '"></div><div class="footer"/></div></div>';
+    var referenceDiv = $$('#mainview .contentBox01h')[1]
+    referenceDiv.parentNode.insertBefore(optionBox, referenceDiv);
+    var container = $(contentRandId);
+    container.appendChild(content);
+}
+
+
+/***************************************************************
+*************** Tinkerman Specific Methods *****************
+***************************************************************/
+
+IkariamTools.prototype.toString = function() {
+    return 'IkariamTools:' + this.getView() + 'View'; 
+}
 
 
 
-    
-    
-    //~ getMovements:function() {
-        //~ return IkaTools.getVal('movements');
-    //~ },
-    //~ getMovementsUpdate:function(callbackFunction) {
-        //~ IkaTools.getRemoteDocument('http://' +IkaTools.getDomain() + '/index.php?view=militaryAdvisorMilitaryMovements', function(doc) {
-            //~ IkaTools.views['militaryAdvisorMilitaryMovements'](doc);
-            //~ if(typeof(callbackFunction) == 'function') {
-                //~ callbackFunction(IkaTools.getVal('movements'));
-            //~ }
-        //~ });
-    //~ },
-    
-
-
-//~ }
-
-
-
-
-
-
-
-
-//~ IkaTools.updateConstructionTimer = function() {
-    //~ // update conscruction timers
-    //~ if(IkaTools.config.trackData.construction && (IkaTools.getView() == 'city' || (IkaTools.viewIsBuilding() && $('upgradeInProgress').size() == 1))) {
-        //~ var end = document.body.innerHTML.match(/enddate:\s*\d+/);
-        //~ var current = document.body.innerHTML.match(/currentdate:\s*\d+/);
-        //~ if(end && current) {
-            //~ end = parseInt(end.toString().replace(/enddate:\s*/, ''));
-            //~ current = parseInt(current.toString().replace(/currentdate:\s*/, ''));
-            //~ var secondsLeft = end - current;
-            //~ var d = new Date();
-            //~ IkaTools.getCurrentCity().buildEnd = d.getTime() + (1000 * secondsLeft)
-            //~ if(IkaTools.viewIsBuilding() && IkaTools.getCurrentPosition()) {
-                //~ IkaTools.getCurrentCity().buildBuilding = IkaTools.cityGetBuildingByPosition(IkaTools.getCurrentPosition());
-            //~ }            
-        //~ }
-    //~ }
-//~ }
-
-
-
-//~ IkaTools.views["island"] = function() {
-    //~ if(IkaTools.cityGetIslandId(IkaTools.getCurrentCity()) == document.location.toString().match(/\d+$/)) {
-        //~ var city = IkaTools.getCurrentCity();
-        //~ // update tradegood
-        //~ var class = $('#tradegood').attr('className');
-        //~ city.tradegoodType = class.match(/^[^\s]+/).toString();
-        //~ city.tradegoodType = IkaTools.getCurrentCity().tradegoodType == 'crystal' ? 'glass' : IkaTools.getCurrentCity().tradegoodType;
-        //~ city.tradegoodLevel = parseInt(class.match(/\d+$/).toString());
-        //~ // update sawmill
-        //~ var title = $('#islandfeatures li.wood a').attr('title');
-        //~ city.sawmillLevel = parseInt(title.match(/\d+$/).toString());
-    //~ }
-//~ }
-//~ IkaTools.views["militaryAdvisorMilitaryMovements"] = function(root) {
-    //~ root = typeof(root) == 'undefined' ? document.body : root;
-    //~ var movements = new Array();
-    //~ var d = new Date();
-    //~ $('#fleetMovements table.locationEvents tr', root).each(function() {
-        //~ if(this.className != "") {
-            //~ var tds = $('td', this);
-            //~ var movement = {
-                //~ type:this.className.toString().match(/[^\s]+$/).toString(),
-                //~ units:new Array()
-            //~ };
-            //~ for(var i = 0; i < tds.length; i++) {
-                //~ // get ID and arrival time
-                //~ if(tds[i].id.toString().match(/fleetRow/)) {
-                    //~ movement.id = parseInt(tds[i].id.toString().match(/\d+$/).toString());
-                    //~ movement.timeString = tds[i].innerHTML.toString();            
-                    //~ movement.hours = movement.timeString.match(/\d+h/) ? parseInt(movement.timeString.match(/\d+h/).toString().replace(/h/, '')) : 0;
-                    //~ movement.minutes = movement.timeString.match(/\d+m/) ? parseInt(movement.timeString.match(/\d+m/).toString().replace(/m/, '')) : 0;
-                    //~ movement.seconds = movement.timeString.match(/\d+s/) ? parseInt(movement.timeString.match(/\d+s/).toString().replace(/s/, '')) : 0;
-                    //~ movement.arrivalTime = d.getTime() + (movement.hours * (60*60*1000)) + (movement.minutes * (60*1000) + (movement.seconds * 1000));
-                //~ }
-                //~ // get mission & status
-                //~ if($('img', tds[i]).size() == 1 && $('img', tds[i]).attr('src').toString().match(/mission_/)) {
-                    //~ movement.mission =     $('img', tds[i]).attr('src').toString().match(/mission_[^\.]+/).toString().replace(/^mission_/, '');
-                    //~ movement.status = tds[i].title.match(/\([^\)]+\)/).toString().replace(/(\(|\))/g, '');
-                    //~ movement.description = tds[i].title;
-                //~ }
-                //~ // get abort href
-                //~ if($('a', tds[i]).size() == 1 && $('a', tds[i]).attr('href').toString().match(/abortFleetOperation/)) {
-                    //~ movement.abortHref = $('a', tds[i]).attr('href').toString();
-                //~ }
-                //~ // get units
-                //~ if($('.unitBox', tds[i]).size() > 0) {
-                    //~ var unitDivs = $('.unitBox', tds[i]);                    
-                    //~ for(var x = 0; x < unitDivs.size(); x++) {
-                        //~ var u = {
-                            //~ name:unitDivs[x].title,
-                            //~ qty:parseInt($('.count', unitDivs[x]).text().toString().replace(/(,|\.)/g, '')),
-                            //~ iconSrc:$('.icon img', unitDivs[x]).size() == 1 ? $('.icon img', unitDivs[x]).attr('src') : $('.iconSmall img', unitDivs[x]).attr('src')
-                        //~ };                                        
-                        //~ movement.units.push(u);
-                    //~ }
-                //~ }
-                //~ movement.direction = ($('img', tds[6]).size() == 1 ? 'right' : ($('img', tds[4]).size() == 1  ? 'left' : false));
-                //~ movement.originId = $('a', $('td', this)[3])[0].href.toString().match(/\d+$/).toString();
-                //~ movement.originCityName = $('a', $('td', this)[3])[0].innerHTML.toString();
-                //~ movement.originPlayerName = $('td', this)[3].innerHTML.toString().match(/\([^\)]+\)/).toString().replace(/^\(/, '').replace(/\)$/, '');
-                //~ movement.targetId = $('a', $('td', this)[7])[0].href.toString().match(/\d+$/).toString();
-                //~ movement.targetCityName = $('a', $('td', this)[7])[0].innerHTML.toString();
-                //~ try {
-                    //~ movement.targetPlayerName = $('td', this)[7].innerHTML.toString().match(/\([^\)]+\)/).toString().replace(/^\(/, '').replace(/\)$/, '');
-                //~ } catch(e) {
-                    //~ movement.targetPlayerName = false;
-                //~ }
-            //~ }
-            //~ movements.push(movement);
-        //~ }
-    //~ });
-    //~ IkaTools.setVal('movements', movements);
-//~ }
-//~ IkaTools.views["resource"] = function() {
-    //~ // update resource
-    //~ if(IkaTools.cityGetIslandId(IkaTools.getCurrentCity()) == document.location.toString().match(/\d+$/) || document.location.toString().match(/index\.php$/)) {
-        //~ var city = IkaTools.getCurrentCity();
-        //~ city.sawmillLevel = parseInt($('#resUpgrade .buildingLevel').text().replace(/[^\d]*/, ''));
-        //~ // update wood change
-        //~ city.resourceChanges = typeof(city.resourceChanges) != 'object' ? {} : city.resourceChanges;
-        //~ city.resourceChanges['wood'] = parseInt($('#valueResource').text().replace(/[^\d]*/, '').replace(/[^\d]*/, ''));
-        //~ city.resourceChangeUpdated = typeof(city.resourceChangeUpdated) != 'object' ? {} : city.resourceChangeUpdated;
-        //~ // update city income
-        //~ city.income = parseInt($('#valueWorkCosts').text());
-    //~ }
-//~ }
-
-//~ IkaTools.views["tradegood"] = function() {
-    //~ if(IkaTools.cityGetIslandId(IkaTools.getCurrentCity()) == document.location.toString().match(/\d+$/) || document.location.toString().match(/index\.php$/)) {
-        //~ var city = IkaTools.getCurrentCity();
-        //~ // update tradegood level
-        //~ city.tradegoodLevel = parseInt($('#resUpgrade .buildingLevel').text().replace(/[^\d]*/, ''));
-        //~ // update tradegood type
-        //~ if(type = $('#resUpgrade .content img:first-child').attr('src').match(/img_.+\.jpg/)) {
-            //~ type =     type.toString().replace(/img_/, '').replace(/\.jpg/, '');
-            //~ city.tradegoodType = type == 'crystal' ? 'glass' : type;
-            //~ // update tradegood change
-            //~ city.resourceChanges = typeof(city.resourceChanges) != 'object' ? {} : city.resourceChanges;
-            //~ city.resourceChanges[type] = parseInt($('#valueResource').text().replace(/[^\d]*/, '').replace(/[^\d]*/, ''));
-            //~ city.resourceChangeUpdated = typeof(city.resourceChangeUpdated) != 'object' ? {} : city.resourceChangeUpdated;
-        //~ }
-        //~ // update city income
-        //~ city.income = parseInt($('#valueWorkCosts').text());
-    //~ }
-//~ }
-//~ IkaTools.views["townHall"] = function() {
-    //~ var city = IkaTools.getCurrentCity();
-    //~ city.level = parseInt($('#buildingUpgrade .buildingLevel').text().replace(/[^\d]*/, ''));    
-    //~ city.resourceMaximums = typeof(city.resourceMaximums) == 'undefined' ? {} : city.resourceMaximums;
-    //~ city.resourceMaximums["population"] = parseInt($('#CityOverview .stats .space .total').text());
-    //~ // update town hall name
-    //~ var building = IkaTools.cityGetBuildingByPosition(0);
-    //~ building.name = $('#mainview h1:first-child').text();
-//~ }
-
-//~ IkaTools.getCurrentCityResource = function(type) {
-    //~ var resourceLis = $('#cityResources ul.resources li');
-    //~ for(var i = 0; i < resourceLis.size(); i++) {
-        //~ if(resourceLis[i].className == type) {
-            //~ switch(type) {
-                //~ case 'glass': var parsedType = 'crystal'; break;
-                //~ case 'population': var parsedType = 'inhabitants'; break;
-            //~ }
-            //~ return parseInt($('#value_' + (type == 'glass' ? 'crystal' : type), resourceLis[i]).text().replace(/[^\d]/, ''));
-        //~ }
-    //~ }
-    //~ return 0;
-//~ }
-
+/***************************************************************
+************ Common Ikariam Values Database **************
+***************************************************************/
 
 IkariamTools.BUILDINGSRESOURCES = {
     palace: [

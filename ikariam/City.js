@@ -10,7 +10,6 @@ Beastx.CityObject = function() {};
 
 Beastx.CityObject.prototype.init = function(id) {
     this.scriptName = 'City Object';
-    this.postUrl = Beastx.Config.postUrl;
     this.serverClassName = 'City';
     
     this.id = id ? id : 0; // 0 value is a new city objct
@@ -28,13 +27,9 @@ Beastx.CityObject.prototype.init = function(id) {
     this.production = {};
 }
 
-Beastx.CityObject.prototype.getId = function() {
-    return this.id;
-}
-
-Beastx.CityObject.prototype.getBuildings = function() {
-    return this.buildings;
-}
+/***************************************************************
+****** Main methods to set and get data and clone ********
+***************************************************************/
 
 Beastx.CityObject.prototype.clone = function() {
     var newObject = New(Beastx.CityObject, [ this.id ]);
@@ -80,30 +75,13 @@ Beastx.CityObject.prototype.getChildData = function(child) {
     return child.getData();
 }
 
-Beastx.CityObject.prototype.getProduction = function() {
-    return this.production;
-}
 
-Beastx.CityObject.prototype.sendInfoToServer = function(onLoadCallback) {
-    DOM.post(
-        this.postUrl,
-        { className: this.serverClassName, action: 'save', params: this.getData() },
-        function(response) {
-            if (onLoadCallback) {
-                onLoadCallback(response);
-            }
-        }
-    );
-}
+/***************************************************************
+**** Methods for calculate if an building can upgrade ******
+***************************************************************/
 
 Beastx.CityObject.prototype.getResourceReductionPercent = function(resourceType) {
-    var resourceReductionBuildingTypeIdRelation = {
-        'wine': 21,
-        'marble': 20, 
-        'sulfur': 22, 
-        'glass': 23, 
-        'wood': 15
-    };
+    var resourceReductionBuildingTypeIdRelation = { 'wine': 21, 'marble': 20,  'sulfur': 22,  'glass': 23,  'wood': 15 };
     var buildingForReduction = this.getBuildingByTypeId(resourceReductionBuildingTypeIdRelation[resourceType]);
     if (buildingForReduction) {
         var  resourceReductionBuildingLevel = buildingForReduction.getLevel();
@@ -112,6 +90,52 @@ Beastx.CityObject.prototype.getResourceReductionPercent = function(resourceType)
     } else {
         return  1 - (86 / 100);
     }
+}
+
+Beastx.CityObject.prototype.buildingCanUpgrade = function(typeId) {
+    var resourcesMissing = this.getResourcesMissingByBuildingTypeId(typeId);
+    for (var type in resourcesMissing) {
+        if (resourcesMissing[type] > 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+
+/***************************************************************
+************ Several Getters for external use ****************
+***************************************************************/
+
+Beastx.CityObject.prototype.getAllAvailableBuildingsForUpgrade = function() {
+    var buildingsCanUpgrade = [];
+    for (var i = 0; i < this.buildings.length; ++i) {
+         if (this.buildingCanUpgrade(this.buildings[i].getTypeId())) {
+            buildingsCanUpgrade.push(this.buildings[i]);
+         }
+    }
+    return buildingsCanUpgrade;
+}
+
+Beastx.CityObject.prototype.getResourcesMissingForAllBuildings = function() {
+    var resourcesMissing = {};
+    for (var i = 0; i < this.buildings.length; ++i) {
+        resourcesMissing[this.buildings[i].getTypeName()] = this.getResourcesMissingByBuildingTypeId(this.buildings[i].getTypeId());
+    }
+    return resourcesMissing;
+}
+
+Beastx.CityObject.prototype.getAvailableResourcesByTypeName = function(type) {
+    return this.getResourceByTypeName(type).getAmmount();
+}
+
+Beastx.CityObject.prototype.getAllAvailableResources = function() {
+    var availableResources = {};
+    for (var i = 0; i < this.resources.length; ++i) {
+        availableResources[this.resources[i].getResourceTypeName()] = this.getAvailableResourcesByTypeName(this.resources[i].getResourceTypeName());
+    }
+    return availableResources;
 }
 
 Beastx.CityObject.prototype.getName = function() {
@@ -136,14 +160,10 @@ Beastx.CityObject.prototype.getResourceByTypeId = function(typeId) {
 
 Beastx.CityObject.prototype.getResourceByTypeName = function(type) {
     for (var i = 0; i < this.resources.length; ++i) {
-        if (this.resources[i].getTypeName() == type) {
+        if (this.resources[i].getResourceTypeName() == type) {
             return this.resources[i];
         }
     }
-}
-
-Beastx.CityObject.prototype.toString = function() {
-    return this.name;
 }
 
 Beastx.CityObject.prototype.getResourcesMissingByBuildingTypeId = function(buildingTypeId) {
@@ -165,141 +185,27 @@ Beastx.CityObject.prototype.getResourcesMissingByBuildingTypeId = function(build
     return resourcesMissing;
 }
 
-Beastx.CityObject.prototype.getResourcesMissingForAllBuildings = function() {
-    var resourcesMissing = {};
-    for (var i = 0; i < this.buildings.length; ++i) {
-        resourcesMissing[this.buildings[i].getTypeName()] = this.getResourcesMissingByBuildingTypeId(this.buildings[i].getTypeId());
-    }
-    return resourcesMissing;
+Beastx.CityObject.prototype.getProduction = function() {
+    return this.production;
 }
 
-Beastx.CityObject.prototype.getAvailableResourcesByTypeName = function(type) {
-    return this.getResourceByTypeName(type).getAmmount();
+Beastx.CityObject.prototype.getId = function() {
+    return this.id;
 }
 
-Beastx.CityObject.prototype.getAllAvailableResources = function() {
-    var availableResources = {};
-    for (var i = 0; i < this.resources.length; ++i) {
-        availableResources[this.resources[i].getTypeName()] = this.getAvailableResourcesByTypeName(this.resources[i].getTypeName());
-    }
-    return availableResources;
+Beastx.CityObject.prototype.getBuildings = function() {
+    return this.buildings;
 }
 
-Beastx.CityObject.prototype.buildingCanUpgrade = function(typeId) {
-    var resourcesMissing = this.getResourcesMissingByBuildingTypeId(typeId);
-    for (var type in resourcesMissing) {
-        if (resourcesMissing[type] > 0) {
-            return false;
-        }
-    }
-    return true;
-}
-
-Beastx.CityObject.prototype.getAllAvailableBuildingsForUpgrade = function() {
-    var buildingsCanUpgrade = [];
-    for (var i = 0; i < this.buildings.length; ++i) {
-         if (this.buildingCanUpgrade(this.buildings[i].getTypeId())) {
-            buildingsCanUpgrade.push(this.buildings[i]);
-         }
-    }
-    return buildingsCanUpgrade;
+Beastx.CityObject.prototype.getResources = function() {
+    return this.resources;
 }
 
 
-//~ cityGetBuildingByPosition:function(position, city) {
-        //~ if(typeof(position) == 'object' && typeof(position.id) != 'undefined') {
-            //~ var pos = city;
-            //~ city = position;
-            //~ position = pos;
-        //~ } else {
-            //~ city = typeof(city) != 'undefined' ? city : IkaTools.getCurrentCity();    
-        //~ }
-        //~ var buildings = city.buildings ? city.buildings : new Array();
-        //~ for(var i = 0; i < buildings.length; i++) {
-            //~ if(buildings[i].position.toString() == position.toString()) {
-                //~ return buildings[i];
-            //~ }
-        //~ }
-        //~ return false;
-    //~ },
-    //~ cityGetBuildingByType:function(type, city) {
-        //~ if(typeof(type) == 'object' && typeof(type.id) != 'undefined') {
-            //~ var tmp = city;
-            //~ city = type;
-            //~ type = tmp;
-        //~ } else {
-            //~ city = typeof(city) != 'undefined' ? city : IkaTools.getCurrentCity();    
-        //~ }
-        //~ var buildings = city.buildings ? city.buildings : new Array();
-        //~ for(var i = 0; i < buildings.length; i++) {
-            //~ if(buildings[i].type == type) {
-                //~ return buildings[i];
-            //~ } 
-        //~ }
-        //~ return false;
-    //~ },
-    //~ cityGetBuildBuilding:function(city) {
-        //~ city = typeof(city) == 'object' ? city : IkaTools.getCurrentCity();    
-        //~ return (IkaTools.cityGetBuildSecondsRemaining(city) > 0 && typeof(city.buildBuilding) != 'undefined' && typeof(city.buildBuilding) == 'object') ? city.buildBuilding : false;
-    //~ },
-    //~ cityGetBuildSecondsRemaining:function(city) {
-        //~ city = typeof(city) == 'object' ? city : IkaTools.getCurrentCity();    
-        //~ var buildEnd = typeof(city.buildEnd) != 'undefined' ? parseInt(city.buildEnd) : 0;
-        //~ var d = new Date();
-        //~ var timeLeft = buildEnd - d.getTime();
-        //~ return timeLeft > 0 ? Math.floor(timeLeft / 1000) : false;
-    //~ },
-    //~ cityGetIncome:function(city) {
-        //~ city = typeof(city) == 'object' ? city : IkaTools.getCurrentCity();
-        //~ return typeof(city.income) == 'undefined' ? 0 : parseInt(city.income);
-    //~ },
-    //~ cityGetIslandId:function(city) {
-        //~ city = typeof(city) == 'object' ? city : IkaTools.getCurrentCity();
-        //~ return typeof(city.islandId) == 'undefined' ? 0 : parseInt(city.islandId);
-    //~ },
-    //~ cityGetLevel:function(city) {
-        //~ city =     typeof(city) == 'object' ? city : IkaTools.getCurrentCity();
-        //~ return typeof(city.level) == 'undefined' ? 0 : parseInt(city.level);
-    //~ },
-    //~ cityGetResource:function(type, city) {
-        //~ city =     typeof(city) == 'object' ? city : IkaTools.getCurrentCity();
-        //~ if(type == 'gold') {
-            //~ var income = typeof(city.income) != 'undefined' ? parseInt(city.income) : 0;
-            //~ var upkeep = typeof(city.upkeep) != 'undefined' ? parseInt(city.upkeep) : 0;
-            //~ return income - upkeep;
-        //~ } else {
-            //~ var start = (typeof(city.resources) == 'undefined' || typeof(city.resources[type]) == 'undefined') ? 0 : parseInt(city.resources[type]);
-            //~ var d = new Date();
-            //~ var timeSince = (typeof(city.resourceChangeUpdated) == 'undefined' || typeof(city.resourceChangeUpdated[type]) == 'undefined') ? 0 : (d.getTime() - parseInt(city.resourceChangeUpdated[type])) / 1000;
-            //~ timeSince = timeSince / 60;
-            //~ var hoursSince = timeSince / 60;
-            //~ var qty = Math.floor(start + (IkaTools.cityGetResourceChange(type, city) * hoursSince));
-            //~ return qty < IkaTools.cityGetResourceMax(type, city) ? qty : IkaTools.cityGetResourceMax(type, city);
-        //~ }
-    //~ },
-    //~ cityGetResourceChange:function(type, city) {
-        //~ city =     typeof(city) == 'object' ? city : IkaTools.getCurrentCity();
-        //~ var change = (typeof(city.resourceChanges) == 'undefined' || typeof(city.resourceChanges[type]) == 'undefined') ? 0 : parseInt(city.resourceChanges[type]);
-        //~ return type == 'wine' ? change - IkaTools.cityGetWineConsumption(city) : change;
-    //~ },
-    //~ cityGetResourceMax:function(type, city) {
-        //~ city =     typeof(city) == 'object' ? city : IkaTools.getCurrentCity();
-        //~ return (typeof(city.resourceMaximums) == 'undefined' || typeof(city.resourceMaximums[type]) == 'undefined') ? 0 : parseInt(city.resourceMaximums[type]);
-    //~ },
-    //~ cityGetSawmillLevel:function(city) {
-        //~ city =     typeof(city) == 'object' ? city : IkaTools.getCurrentCity();
-        //~ return typeof(city.sawmillLevel) == 'undefined' ? 0 : parseInt(city.sawmillLevel);
-    //~ },
-    //~ cityGetTradegoodLevel:function(city) {
-        //~ city =     typeof(city) == 'object' ? city : IkaTools.getCurrentCity();
-        //~ return typeof(city.tradegoodLevel) == 'undefined' ? 0 : parseInt(city.tradegoodLevel);
-    //~ },
-    //~ cityGetTradegoodType:function(city) {
-        //~ city =     typeof(city) == 'object' ? city : IkaTools.getCurrentCity();
-        //~ return typeof(city.tradegoodType) == 'undefined' ? false : city.tradegoodType;
-    //~ },
-    //~ cityGetWineConsumption:function(city) {
-        //~ city =     typeof(city) == 'object' ? city : IkaTools.getCurrentCity();
-        //~ return typeof(city.wineConsumption) == 'undefined' ? 0 : city.wineConsumption;
-    //~ },
-    
+/***************************************************************
+*************** Tinkerman Specific Methods *****************
+***************************************************************/
+
+Beastx.CityObject.prototype.toString = function() {
+    return this.name;
+}

@@ -10,7 +10,6 @@ Beastx.IslandObject = function() {};
 
 Beastx.IslandObject.prototype.init = function(id) {
     this.scriptName = 'Island Object';
-    this.postUrl = Beastx.Config.postUrl;
     this.serverClassName = 'Island';
     
     this.id = id ? id : 0; // 0 value is a new island objct
@@ -23,9 +22,10 @@ Beastx.IslandObject.prototype.init = function(id) {
     this.players = [];
 }
 
-Beastx.IslandObject.prototype.getId = function() {
-    return this.id;
-}
+
+/***************************************************************
+****** Main methods to set and get data and clone ********
+***************************************************************/
 
 Beastx.IslandObject.prototype.clone = function() {
     var newObject = New(Beastx.IslandObject, [ this.id ]);
@@ -57,14 +57,20 @@ Beastx.IslandObject.prototype.getData = function() {
     }
 }
 
-Beastx.IslandObject.prototype.sendInfoToServer = function(onLoadCallback) {
-    DOM.post(
-        this.postUrl,
-        { className: this.serverClassName, action: 'save', params: this.getData() },
-        function(response) {
-            if (onLoadCallback) {
-                onLoadCallback(response);
-            }
-        }
-    );
+
+/***************************************************************
+************ Several Getters for external use ****************
+***************************************************************/
+
+Beastx.IslandObject.prototype.getId = function() {
+    return this.id;
+}
+
+
+/***************************************************************
+*************** Tinkerman Specific Methods *****************
+***************************************************************/
+
+Beastx.IslandObject.prototype.toString = function() {
+    return this.name + '[' + this.coords[x] + ':' + this.coords[y] + ']';
 }

@@ -10,10 +10,9 @@ Beastx.BuildingObject = function() {};
 
 Beastx.BuildingObject.prototype.init = function(id) {
     this.scriptName = 'Building Object';
-    this.postUrl = Beastx.Config.postUrl;
     this.serverClassName = 'Building';
-    this.buildingNames = { 1: 'townHall', 2: 'academy', 3: 'port', 4: 'shipyard', 5: 'warehouse', 6: 'wall', 7: 'tavern', 8: 'museum', 9: 'palace', 10: 'palaceColony', 11: 'embassy', 12: 'safehouse', 13: 'barracks', 14: 'workshop', 15: 'carpentering', 16: 'forester', 17: 'stonemason', 18: 'winegrower', 19: 'alchemist', 20: 'architect', 21: 'vineyard', 22: 'fireworker', 23: 'optician', 24: 'glassblowing' };
-    this.resourcesTypeNames = { 1: 'wine', 2: 'marble', 3: 'sulfur', 4: 'glass', 5: 'wood' };
+    this.buildingNames = IkaTools.data.buildingNames;
+    this.resourcesTypeNames = IkaTools.data.resourceNames;
     this.id = id ? id : 0; // 0 value is a new building objct
     this.cityId = 0;
     this.buildingTypeId = 0;
@@ -22,13 +21,10 @@ Beastx.BuildingObject.prototype.init = function(id) {
     this.neededResourcesToUpdate = [];
 }
 
-Beastx.BuildingObject.prototype.getId = function() {
-    return this.id;
-}
 
-Beastx.BuildingObject.prototype.getTypeName = function() {
-    return this.buildingNames[this.buildingTypeId];
-}
+/***************************************************************
+****** Main methods to set and get data and clone ********
+***************************************************************/
 
 Beastx.BuildingObject.prototype.clone = function() {
     var newObject = New(Beastx.BuildingObject, [ this.id ]);
@@ -55,24 +51,25 @@ Beastx.BuildingObject.prototype.getData = function() {
     }
 }
 
+
+/***************************************************************
+************ Several Getters for external use ****************
+***************************************************************/
+
+Beastx.BuildingObject.prototype.getId = function() {
+    return this.id;
+}
+
+Beastx.BuildingObject.prototype.getBuildingTypeName = function() {
+    return this.buildingNames[this.buildingTypeId];
+}
+
 Beastx.BuildingObject.prototype.getLevel = function() {
     return this.level;
 }
 
 Beastx.BuildingObject.prototype.getTypeId = function() {
     return this.buildingTypeId;
-}
-
-Beastx.BuildingObject.prototype.sendInfoToServer = function(onLoadCallback) {
-    DOM.post(
-        this.postUrl,
-        { className: this.serverClassName, action: 'save', params: this.getData() },
-        function(response) {
-            if (onLoadCallback) {
-                onLoadCallback(response);
-            }
-        }
-    );
 }
 
 Beastx.BuildingObject.prototype.getResourceTypeMissing = function(resourceType) {
@@ -93,6 +90,11 @@ Beastx.BuildingObject.prototype.getResourceRequired = function() {
     }
     return total;
 }
+
+
+/***************************************************************
+*************** Tinkerman Specific Methods *****************
+***************************************************************/
 
 Beastx.BuildingObject.prototype.toString = function() {
     return this.buildingNames[this.buildingTypeId];

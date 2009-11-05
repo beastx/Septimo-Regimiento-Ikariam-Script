@@ -10,7 +10,6 @@ Beastx.AllianceObject = function() {};
 
 Beastx.AllianceObject.prototype.init = function(id) {
     this.scriptName = 'Alliance Object';
-    this.postUrl = Beastx.Config.postUrl;
     this.serverClassName = 'Alliance';
     
     this.id = id ? id : 0; // 0 value is a new alliance objct
@@ -18,12 +17,14 @@ Beastx.AllianceObject.prototype.init = function(id) {
     this.tag = null;
     this.players =  [];
     this.totalPoints = 0;
+    this.mediaPoints = 0;
     this.ranking = 0;
 }
 
-Beastx.AllianceObject.prototype.getId = function() {
-    return this.id;
-}
+
+/***************************************************************
+****** Main methods to set and get data and clone ********
+***************************************************************/
 
 Beastx.AllianceObject.prototype.clone = function() {
     var newObject = New(Beastx.AllianceObject, [ this.id ]);
@@ -38,6 +39,7 @@ Beastx.AllianceObject.prototype.setData = function(newData) {
     this.players = newData.players ? newData.players : [];
     this.totalPoints = newData.totalPoints ? newData.totalPoints : 0;
     this.ranking = newData.ranking ? newData.ranking : 0;
+    this.mediaPoints = parseInt(this.totalPoints / this.players.length);
 }
 
 Beastx.AllianceObject.prototype.getData = function() {
@@ -47,18 +49,25 @@ Beastx.AllianceObject.prototype.getData = function() {
         tag: this.tag,
         players: this.players,
         totalPoints: this.totalPoints,
+        mediaPoints: this.mediaPoints,
         ranking: this.ranking
     }
 }
 
-Beastx.AllianceObject.prototype.sendInfoToServer = function(onLoadCallback) {
-    DOM.post(
-        this.postUrl,
-        { className: this.serverClassName, action: 'save', params: this.getData() },
-        function(response) {
-            if (onLoadCallback) {
-                onLoadCallback(response);
-            }
-        }
-    );
+
+/***************************************************************
+************ Several Getters for external use ****************
+***************************************************************/
+
+Beastx.AllianceObject.prototype.getId = function() {
+    return this.id;
+}
+
+
+/***************************************************************
+*************** Tinkerman Specific Methods *****************
+***************************************************************/
+
+Beastx.AllianceObject.prototype.toString = function() {
+    return this.name ? this.name : 'Alliance';
 }

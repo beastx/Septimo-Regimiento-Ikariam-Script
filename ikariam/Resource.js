@@ -10,7 +10,6 @@ Beastx.ResourceObject = function() {};
 
 Beastx.ResourceObject.prototype.init = function(typeId) {
     this.scriptName = 'Resource Object';
-    this.postUrl = Beastx.Config.postUrl;
     this.serverClassName = 'Resource';
     
     this.id = 0; // 0 value is a new resource objct
@@ -22,21 +21,10 @@ Beastx.ResourceObject.prototype.init = function(typeId) {
     this.resourceFieldLevel = 0;
 }
 
-Beastx.ResourceObject.prototype.getId = function() {
-    return this.id;
-}
 
-Beastx.ResourceObject.prototype.getTypeId = function() {
-    return this.typeId;
-}
-
-Beastx.ResourceObject.prototype.getTypeName = function() {
-    return this.typeNames[this.typeId];
-}
-
-Beastx.ResourceObject.prototype.getAmmount = function() {
-    return this.ammount;
-}
+/***************************************************************
+****** Main methods to set and get data and clone ********
+***************************************************************/
 
 Beastx.ResourceObject.prototype.clone = function() {
     var newObject = New(Beastx.ResourceObject, [ this.id ]);
@@ -64,17 +52,31 @@ Beastx.ResourceObject.prototype.getData = function() {
     }
 }
 
-Beastx.ResourceObject.prototype.sendInfoToServer = function(onLoadCallback) {
-    DOM.post(
-        this.postUrl,
-        { className: this.serverClassName, action: 'save', params: this.getData() },
-        function(response) {
-            if (onLoadCallback) {
-                onLoadCallback(response);
-            }
-        }
-    );
+
+/***************************************************************
+************ Several Getters for external use ****************
+***************************************************************/
+
+Beastx.ResourceObject.prototype.getId = function() {
+    return this.id;
 }
+
+Beastx.ResourceObject.prototype.getTypeId = function() {
+    return this.typeId;
+}
+
+Beastx.ResourceObject.prototype.getResourceTypeName = function() {
+    return this.typeNames[this.typeId];
+}
+
+Beastx.ResourceObject.prototype.getAmmount = function() {
+    return this.ammount;
+}
+
+
+/***************************************************************
+*************** Tinkerman Specific Methods *****************
+***************************************************************/
 
 Beastx.ResourceObject.prototype.toString = function() {
     return this.typeNames[this.typeId];

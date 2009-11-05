@@ -10,7 +10,6 @@ Beastx.PlayerObject = function() {};
 
 Beastx.PlayerObject.prototype.init = function(id) {
     this.scriptName = 'Player Object';
-    this.postUrl = Beastx.Config.postUrl;
     this.serverClassName = 'Player';
     
     this.id = id ? id : 0; // 0 value is a new player objct
@@ -25,9 +24,10 @@ Beastx.PlayerObject.prototype.init = function(id) {
     this.cities = [];
 }
 
-Beastx.PlayerObject.prototype.getId = function() {
-    return this.id;
-}
+
+/***************************************************************
+****** Main methods to set and get data and clone ********
+***************************************************************/
 
 Beastx.PlayerObject.prototype.clone = function() {
     var newObject = New(Beastx.PlayerObject, [ this.id ]);
@@ -62,17 +62,34 @@ Beastx.PlayerObject.prototype.getData = function() {
     }
 }
 
-Beastx.PlayerObject.prototype.sendInfoToServer = function(onLoadCallback) {
-    DOM.post(
-        this.postUrl,
-        { className: this.serverClassName, action: 'save', params: this.getData() },
-        function(response) {
-            if (onLoadCallback) {
-                onLoadCallback(response);
-            }
-        }
-    );
+/***************************************************************
+******* Main methods to load and save player data ********
+***************************************************************/
+
+Beastx.PlayerObject.prototype.loadData = function() {
+    var tempDataPlayer = IkaTools.getVal('player');
+    if (tempDataPlayer) {
+        this.setData(tempDataPlayer);
+    }
 }
+
+Beastx.PlayerObject.prototype.saveData = function() {
+    IkaTools.setVal('player', this.getData());
+}
+
+
+/***************************************************************
+************ Several Getters for external use ****************
+***************************************************************/
+
+Beastx.PlayerObject.prototype.getId = function() {
+    return this.id;
+}
+
+
+/***************************************************************
+*************** Tinkerman Specific Methods *****************
+***************************************************************/
 
 Beastx.PlayerObject.prototype.toString = function() {
     return this.name ? this.name : 'PlayerObject';
