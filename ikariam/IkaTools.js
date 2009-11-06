@@ -124,8 +124,10 @@ IkariamTools.prototype.islandView = function() {
 }
 
 IkariamTools.prototype.tavernView = function() {
+    var selectElement = $('wineAmount');
+    var wineConsumption = parseInt(selectElement.options[selectElement.selectedIndex].textContent.match(/^\d+/).toString().replace(/(,|\.)/g, ''));
     this.cities.getCurrentCity().setData({
-        wineConsumption: parseInt($('#wineAmount option:selected').text().match(/^\d+/).toString().replace(/(,|\.)/g, ''))
+        wineConsumption: wineConsumption
     });
 }
 
