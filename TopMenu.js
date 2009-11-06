@@ -27,6 +27,9 @@ Beastx.TopMenu.prototype.create = function() {
     ikariamOldOptions += '<li class="serverTime"><a target="_blank" href="http://7moreg.beastx.com.ar/"><span id="servertime" class="textLabel">Sitio Web Alianza</span></a></li>';
     ikariamOldOptions += '<li class="serverTime"><a target="_blank" href="http://7moreg.beastx.com.ar/blog/"><span id="servertime" class="textLabel">Blog</span></a></li>';
     ikariamOldOptions += '<li class="serverTime"><a href="http://s2.ar.ikariam.com/index.php?view=highscore&showMe=1"><span id="servertime" class="textLabel">Clasificacion</span></a></li>';
+    
+    ikariamOldOptions += '<li class="serverTime"><a href="#" onclick="javascript:switchNoteDisplay(); return false;"><span id="servertime" class="textLabel">Notas</span></a></li>';
+    
     ikariamOldOptions += '<li class="serverTime"><a href="http://board.ar.ikariam.com/" target="_blank"><span id="servertime" class="textLabel">Foro</span></a></li>';
     ikariamOldOptions += '<li class="serverTime"><a href="http://s2.ar.ikariam.com/index.php?view=options"><span id="servertime" class="textLabel">Opciones</span></a></li>';
     ikariamOldOptions += '<li class="serverTime"><a href="http://board.ar.ikariam.com/" target="_blank"><span id="servertime" class="textLabel"></span></a></li>';
