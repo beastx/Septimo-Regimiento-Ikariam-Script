@@ -141,40 +141,14 @@ Beastx.OptionsPage.prototype.createAndAppendOptionBlock = function() {
                 'Nos muestra informacion de los diferentes puntajes de cada jugador en la vista Isla.'
             ),
             this.optionBoxRow(
-                'Beastx - Donation Page Improver',
-                this.checkbox('donationPageImprover'),
-                'Nos agrega opciones que ayudan en las vistas de aserradero o minas.',
-                true
-            ),
-            this.optionBoxRow(
-                'Beastx - Pillage Helper',
-                this.checkbox('pillageHelper'),
-                'Este modulo agrega datos de ayuda en la vista del escondite.',
-                true
-            ),
-            this.optionBoxRow(
-                'Beastx - Unit Formatter',
-                this.checkbox('unitFormater'),
-                'Este modulo nos genera un texto que nos da la posibilidad de copiar y pegar para de esta forma informar de una manera sencilla sobre nuestro estado militar a quien lo necesite.',
-                true
-            ),
-            this.optionBoxRow(
-                'Beastx - Combat Converter',
-                this.checkbox('crConverter'),
-                'Este modulo nos d ala opcion de convertir nuestro reporte de batalla en un codigo que servira para pegar en un chat, o en los mensajes de ikariam o en el foro.',
-                true
-            ),
-            this.optionBoxRow(
-                'Beastx - Triunphal Arch',
-                this.checkbox('triumphalArch'),
-                'Este modulo nos muestra las diferentes batallas que hayamos tenido con cada uno de los jugadors, diciendonos si ganamos o perdimos, ademas de contarnos cuantas vamos por dia para evitar pushing y la cantidad de recuross robados.',
-                true
+                'Beastx - Empire Board',
+                this.checkbox('empireBoard'),
+                'Este modulo incluye los script Empire Board y Empire Board Graphic AddOn'
             ),
             this.optionBoxRow(
                 'Beastx - Embassy Tools',
                 this.checkbox('embassyTools'),
-                'Este modulo nos da diferentes herramientas en la pagina del Diplomatico y en la pagina de la embajada, como ordenar los usuarios por diferentes columnas, accesos directos a las polis de los miembros entre otras cosas.',
-                true
+                'Este modulo nos da diferentes herramientas en la pagina del Diplomatico y en la pagina de la embajada, como ordenar los usuarios por diferentes columnas, accesos directos a las polis de los miembros entre otras cosas.'
             ),
             this.optionBoxRow(
                 'Beastx - Favorite Targets',
@@ -186,12 +160,6 @@ Beastx.OptionsPage.prototype.createAndAppendOptionBlock = function() {
                 'Beastx - Alliance Map',
                 this.checkbox('allianceMap'),
                 'Este modulo nos muestra un mapa marcandonos en las islas aledanias donde hay ciudades de aliados.',
-                true
-            ),
-            this.optionBoxRow(
-                'Beastx - Empire Board',
-                this.checkbox('empireBoard'),
-                'Este modulo incluye los script Empire Board y Empire Board Graphic AddOn',
                 true
             ),
             this.optionBoxRow(
@@ -298,7 +266,7 @@ Beastx.OptionsPage.prototype.save = function() {
     var options = this.optionsForm.getValue();
     Beastx.Config.options = options;
     Beastx.saveConfig();
-    location.href = 'http://s2.ar.ikariam.com/index.php?view=city&id=' + IkaTools.getCurrentCityId();
+    location.href = 'http://s2.ar.ikariam.com/index.php?view=city&id=' + IkaTools.cities.getCurrentCityId();
 }
 
 Beastx.OptionsPage.prototype.getAndPrepareConfigs = function() {
