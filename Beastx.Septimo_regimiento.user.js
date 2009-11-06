@@ -6,6 +6,8 @@
 // @include               http://s*.ikariam.*/*
 // @exclude              http://support.ikariam.*
 // @exclude              http://board.*.ikariam/*
+// @exclude              http://*.ikariam.*/*?view=premiumPayment
+// @exclude              http://*.ikariam.*/*?view=premium
 
 // @require               http://ikariam.beastx/tools/userScripts/ikariam/IkaTools.js
 
@@ -166,6 +168,14 @@ if (!GM_getValue('logAdded2')) {
         
         if (Beastx.Config.options.inlineScore) {
             New(Beastx.InlineScore, [ actualView ]);
+        }
+        
+        if (Beastx.Config.options.empireBoard) {
+            New(Beastx.EmpireBoard, [ actualView ]);
+        }
+        
+        if (Beastx.Config.options.embassyTools) {
+            New(Beastx.EmbassyTools, [ actualView ]);
         }
         
     };
