@@ -25,8 +25,8 @@ function $(id) {
     return document.getElementById(id);
 }
 
-function $$(selector) {
-  return cssQuery(selector);
+function $$(selector, from) {
+  return cssQuery(selector, from);
 }
 
 function getQueryString(ji, fromString) {
