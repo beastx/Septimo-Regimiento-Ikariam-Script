@@ -10,9 +10,13 @@
 // @require               http://ikariam.beastx/tools/userScripts/requires/IkaTools.js
 // @require               http://ikariam.beastx/tools/userScripts/requires/ScriptUpdater.js
 
-// @version               0.3
+// @version               0.4
 // @author                Beastx
 //
+// @history                0.4 clean list of element to listen click event
+// @history                0.4 save temp data to show directly instead of search another time in the server
+// @history                0.4 foxed problem with own city selection
+// @history                0.4 Fixed Problems with click event
 // @history                0.3 Fixed Problems with click event
 // @history                0.3 Fixed Ally Media Points value
 // @history                0.2 Added animation dots when script is searching
@@ -32,6 +36,8 @@ Beastx.InlineScore.prototype.init = function(currentView) {
     }
     
     this.scriptName = 'Inline Score';
+    
+    this.infos = {};
     
     this.playerDataElements = {};
     this.allyDataElements = {};
@@ -63,9 +69,11 @@ Beastx.InlineScore.prototype.init = function(currentView) {
         defensivePoints: 'defense'
     };
 
-    this.cities = $$('li.city');
+    this.cities = $$('li.cityLocation');
     for (var i = 0; i < this.cities.length; i++) {
-        DOM.addListener(this.cities[i].childNodes[5], 'mouseup', DOM.createCaller(this, 'onCityClick'));
+        if (DOM.hasClass(this.cities[i], 'city')) {
+            DOM.addListener(this.cities[i].childNodes[5], 'mouseup', DOM.createCaller(this, 'onCityClick'));
+        }
     }
         
     this.informationDiv = $('information');
@@ -205,7 +213,11 @@ Beastx.InlineScore.prototype.getSelectedPlayerName = function() {
 
 Beastx.InlineScore.prototype.getSelectedPlayerId = function() {
     var ownerElement = $$('ul.cityinfo li.owner')[0]
-    return getQueryString('receiverId', ownerElement.childNodes[2].href);
+    if (ownerElement.childNodes[2]) {
+        return getQueryString('receiverId', ownerElement.childNodes[2].href);
+    } else {
+        return 0; // own city..
+    }
 }
 
 Beastx.InlineScore.prototype.getSelectedPlayerTotalPoints = function() {
@@ -231,6 +243,7 @@ Beastx.InlineScore.prototype.getSelectedPlayerAllianceId = function() {
 }
 
 Beastx.InlineScore.prototype.getSelectedPlayerCityId = function() {
+    return getQueryString('', $$('ul.cityinfo')[0].childNodes[9].childNodes[3].href);
     return parseInt($$('ul#cities li.selected')[0].childNodes[5].id.replace('city_', ''));
 }
 
@@ -267,11 +280,17 @@ Beastx.InlineScore.prototype.formatPointsNumber = function(number) {
 
 Beastx.InlineScore.prototype.getCityInformation = function() {
     this.selectedPlayerId = this.getSelectedPlayerId();
-    this.selectedPlayerName = this.getSelectedPlayerName();
-    this.selectedPlayerTotalPoints = this.getSelectedPlayerTotalPoints();
-    
-    this.selectedPlayerAllianceId = this.getSelectedPlayerAllianceId();
-    this.selectedPlayerAllianceName = this.getSelectedPlayerAllianceName();
+    if (!this.infos[this.selectedPlayerId]) {
+        this.selectedPlayerName = this.getSelectedPlayerName();
+        this.selectedPlayerTotalPoints = this.getSelectedPlayerTotalPoints();
+        this.selectedPlayerAllianceId = this.getSelectedPlayerAllianceId();
+        this.selectedPlayerAllianceName = this.getSelectedPlayerAllianceName();
+    } else {
+        this.selectedPlayerName = this.infos[this.selectedPlayerId].selectedPlayerName;
+        this.selectedPlayerTotalPoints = this.infos[this.selectedPlayerId].selectedPlayerTotalPoints;
+        this.selectedPlayerAllianceId = this.infos[this.selectedPlayerId].selectedPlayerAllianceId;
+        this.selectedPlayerAllianceName = this.infos[this.selectedPlayerId].selectedPlayerAllianceName;
+    }
     
     this.selectedPlayerCityId = this.getSelectedPlayerCityId();
     this.selectedPlayerCityName = this.getSelectedPlayerCityName();
@@ -285,95 +304,60 @@ Beastx.InlineScore.prototype.getCityInformation = function() {
     
     this.setNamesInTitles();
 
-    this.getScore('armyPoints');
-    this.getScore('goldAmmount');
-    this.getScore('offensivePoints'); 
-    this.getScore('defensivePoints'); 
-    
-  
-    if (this.selectedPlayerAllianceId) {
-        this.getAllyScore(); 
+    if (!this.infos[this.selectedPlayerId]) {
+        this.infos[this.selectedPlayerId] = {
+            selectedPlayerName: this.selectedPlayerName,
+            selectedPlayerTotalPoints: this.selectedPlayerTotalPoints,
+            selectedPlayerAllianceId: this.selectedPlayerAllianceId,
+            selectedPlayerAllianceName: this.selectedPlayerAllianceName
+        };
+        
+        this.getScore('armyPoints');
+        this.getScore('goldAmmount');
+        this.getScore('offensivePoints'); 
+        this.getScore('defensivePoints'); 
+        
+      
+        if (this.selectedPlayerAllianceId) {
+            this.getAllyScore(); 
+        }
+    } else {
+        this.updateScoreMsg(this.playerDataElements['armyPoints'], this.formatPointsNumber(this.infos[this.selectedPlayerId].armyPoints));
+        this.updateScoreMsg(this.playerDataElements['goldAmmount'], this.formatPointsNumber(this.infos[this.selectedPlayerId].goldAmmount));
+        this.updateScoreMsg(this.playerDataElements['offensivePoints'], this.formatPointsNumber(this.infos[this.selectedPlayerId].offensivePoints));
+        this.updateScoreMsg(this.playerDataElements['defensivePoints'], this.formatPointsNumber(this.infos[this.selectedPlayerId].defensivePoints));
+        
+        this.updateScoreMsg(this.allyDataElements.totalMembers, this.infos[this.selectedPlayerId].allianceMembers);
+        this.updateScoreMsg(this.allyDataElements.ranking, this.infos[this.selectedPlayerId].alliancePosition);
+        this.updateScoreMsg(this.allyDataElements.totalPoints, this.formatPointsNumber(this.infos[this.selectedPlayerId].allianceTotalPoints));
+        this.updateScoreMsg(this.allyDataElements.mediaPoints, this.formatPointsNumber(this.infos[this.selectedPlayerId].mediaPoints));
     }
     
     this.updateScoreMsg(this.playerDataElements.totalPoints, this.formatPointsNumber(this.selectedPlayerTotalPoints));
     this.updateScoreMsg(this.cityDataElements.level, this.selectedPlayerCityLevel);
-    
-    return;
-    
-    var checkedTime = (new Date().getTime() - (1000*60*10));
-    if (playerName != Beastx.getGMValue("lastPlayerCheck") || Beastx.getGMValue("lastCheckedTimestamp") < checkedTime || Beastx.getGMValue("lastServerCheck") != this.serverData.host) {
-
-        if (playerScore > -1) {
-            updateScore('score', VAR.formatNumber(playerScore));
-        } else {
-            requestScore(playerName, 'score', function(responseDetails) {
-                updateDetails('score', playerName, townLevel, responseDetails.responseText);
-            });
-        }
-
-        requestScore(playerName, 'military', function(responseDetails) {
-            updateDetails('military', playerName, townLevel, responseDetails.responseText);
-        });
-        requestScore(playerName, 'gold', function(responseDetails) {
-            updateDetails('gold', playerName, townLevel, responseDetails.responseText);
-        });
-        requestScore(playerName, 'offensive', function(responseDetails) {
-            updateDetails('offensive', playerName, townLevel, responseDetails.responseText);
-        });
-        requestScore(playerName, 'defensive', function(responseDetails) {
-            updateDetails('defensive', playerName, townLevel, responseDetails.responseText);
-        });
-
-        if (allyId != -1) {
-            requestAlliance(allyId, function(responseDetails) {
-                updateAllyDetails('allyscore', responseDetails.responseText);
-            });
-        } else {
-            updateScore("allyscore", "-")
-            $('ally_members').style.display = "none";
-        }
-
-
-        Beastx.setGMValue("lastCheckedTimestamp", new Date().getTime() + "");
-        Beastx.setGMValue("lastPlayerCheck", playerName);
-        Beastx.setGMValue("lastServerCheck", this.serverData.host);
-    } else {
-        for (var interation = 0;interation < 4; interation++) {
-            var type = this.scoreTypes[interation];
-            if (type == "allyscore" && Beastx.getGMValue(type) == "-") {
-                $(type).innerHTML = Beastx.getGMValue(type);
-                $('ally_members').style.display = "none";
-            } else {
-                $(type).innerHTML = Beastx.getGMValue(type);
-            }
-        }
-    }
 }
 
 Beastx.InlineScore.prototype.onGetScoreRequestLoad = function(scoreType, responseHtmlAsText) {
-    var hiddenDiv = DOM.createElement("div", { id: scoreType + 'HiddenDiv', style: { display: 'none' }});
+    var hiddenDiv = DOM.createElement("div");
     hiddenDiv.innerHTML = responseHtmlAsText;
-    document.body.appendChild(hiddenDiv);
     
-    var tdScore = $$('div#' + scoreType + 'HiddenDiv td.score');
-    var tdName = $$('div#' + scoreType + 'HiddenDiv  td.name');
+    var tdScore = $$('td.score', hiddenDiv);
+    var tdName = $$('td.name', hiddenDiv);
     
     for (var i = 0; i < tdName.length; i++) {
         if (this.selectedPlayerName.replace(' ', '-') == tdName[i].innerHTML.trim().replace(' ', '-')) {
             var totalScore = tdScore[i].textContent.trim();
         }
     }
-    document.body.removeChild(hiddenDiv);
     this.updateScoreMsg(this.playerDataElements[scoreType], this.formatPointsNumber(totalScore));
+    this.infos[this.selectedPlayerId][scoreType] = totalScore;
     this.setSearchingMsg('player', scoreType, 0);
 }
 
 Beastx.InlineScore.prototype.onGetAllianceRequestLoad = function(responseHtmlAsText) {
-    var hiddenDiv = DOM.createElement("div", { id: 'allyHiddenDiv', style: { display: 'none' }});
+    var hiddenDiv = DOM.createElement("div");
     hiddenDiv.innerHTML = responseHtmlAsText;
-    document.body.appendChild(hiddenDiv);
-    
-    var tds = $$('#allyHiddenDiv #allyinfo')[0];
+    var tds = $$('#allyinfo', hiddenDiv)[0];
     var allianceMembers = tds.childNodes[1].childNodes[4].childNodes[2].textContent;
     var alliancePositionAndTotalPoints = tds.childNodes[1].childNodes[8].childNodes[2].textContent;
     
@@ -381,8 +365,6 @@ Beastx.InlineScore.prototype.onGetAllianceRequestLoad = function(responseHtmlAsT
     var alliancePosition = allianceTempData[0];
     var allianceTotalPoints = allianceTempData[1].replace('(', '').replace(')', '');
 
-    document.body.removeChild(hiddenDiv);
-    
     this.setSearchingMsg('ally', 'totalMembers', 0);
     this.setSearchingMsg('ally', 'ranking', 0);
     this.setSearchingMsg('ally', 'totalPoints', 0);
@@ -391,9 +373,14 @@ Beastx.InlineScore.prototype.onGetAllianceRequestLoad = function(responseHtmlAsT
     this.updateScoreMsg(this.allyDataElements.totalMembers, allianceMembers);
     this.updateScoreMsg(this.allyDataElements.ranking, alliancePosition);
     this.updateScoreMsg(this.allyDataElements.totalPoints, this.formatPointsNumber(allianceTotalPoints));
-
+    
     var mediaPointsAsFormatedString = ((parseInt(allianceTotalPoints.replace(/,/g, '') / allianceMembers) / 1000) + '').replace(/\./g, ',');
     this.updateScoreMsg(this.allyDataElements.mediaPoints, this.formatPointsNumber(mediaPointsAsFormatedString));
+    
+    this.infos[this.selectedPlayerId].allianceMembers = allianceMembers;
+    this.infos[this.selectedPlayerId].alliancePosition = alliancePosition;
+    this.infos[this.selectedPlayerId].allianceTotalPoints = allianceTotalPoints;
+    this.infos[this.selectedPlayerId].mediaPoints = mediaPointsAsFormatedString;
 }
 
 Beastx.InlineScore.prototype.getScore = function(scoreType) {
