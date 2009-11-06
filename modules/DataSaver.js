@@ -13,22 +13,22 @@ Beastx.DataSaver.prototype.init = function(postUrl, currentView) {
     this.currentView = currentView;
     switch(this.currentView) {
         case 'city':
-            this.saveCityData();
+            //~ this.saveCityData();
             break;
         case 'worldmap_iso':
-            this.saveWorldData();
+            //~ this.saveWorldData();
             break;
         case 'island':
-            this.saveIslandData();
+            //~ this.saveIslandData();
             break;
         case 'sendSpy':
-            this.saveSpyData();
+            //~ this.saveSpyData();
             break;
         case 'tradegood':
-            this.saveTradeGood();
+            //~ this.saveTradeGood();
             break;
         case 'resource':
-            this.saveResource();
+            //~ this.saveResource();
             break;
         case 'academy':
         case 'blockade':
