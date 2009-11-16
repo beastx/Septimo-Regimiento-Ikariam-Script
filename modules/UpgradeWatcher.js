@@ -2005,3 +2005,8 @@ function loadDB() {
 }
     })()
 }
+
+Beastx.registerModule(
+    'Upgrade Watcher',
+    'Este modulo nos muestra un icono de color al lado de cada construccion para saber si tenemos recursos suficientes para una ampliacion o no.'
+);

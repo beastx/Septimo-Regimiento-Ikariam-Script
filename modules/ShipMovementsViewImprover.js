@@ -38,3 +38,8 @@ Beastx.ShipMovementsViewImprover.prototype.init = function(currentView) {
         }
     }
 }
+
+Beastx.registerModule(
+    'Ship Movements View Improver',
+    'Este modulo muestra iconos con los tipos y cantidades de recursos y/o tropas transportadas cuando se esta en la vista militar.'
+);

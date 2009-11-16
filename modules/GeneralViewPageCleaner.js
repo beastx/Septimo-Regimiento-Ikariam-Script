@@ -8,9 +8,12 @@
 
 Beastx.GeneralViewPageCleaner = function() {}
     
-Beastx.GeneralViewPageCleaner.prototype.init = function() {
+Beastx.GeneralViewPageCleaner.prototype.init = function(currentView) {
+    if (currentView != 'embassyGeneralAttacksFromAlly') {
+        return;
+    }
     this.scriptName = 'General View Page Cleaner';
-    this.table = $$('div.content table.table01')[0];
+    this.tableElement = $$('div.content table.table01')[0];
     this.trs = $$('tr.rowRanks');
     this.ourRowVisible = Beastx.getGMValue('GeneralViewPageCleaner_ourRowVisible', false);
     this.addOptionsLinks();
@@ -45,7 +48,7 @@ Beastx.GeneralViewPageCleaner.prototype.addOptionsLinks = function() {
             ])
         ])
     ]);
-    this.table.parentNode.insertBefore(this.optionsBlock, this.table);
+    this.tableElement.parentNode.insertBefore(this.optionsBlock, this.tableElement);
 }
 
 Beastx.GeneralViewPageCleaner.prototype.onPlayerSelectChange = function() {
@@ -107,3 +110,8 @@ Beastx.GeneralViewPageCleaner.prototype.isOurRow = function(tr) {
 Beastx.GeneralViewPageCleaner.prototype.isOfPlayer = function(tr, player) {
     return tr.childNodes[7].childNodes[0].childNodes[0].nodeValue.toLowerCase() == player.toLowerCase();
 }
+
+Beastx.registerModule(
+    'General View Page Cleaner',
+    'Mejora de las tareas y vista de la pagina del General de la alianza (se agregan filtros y se limpian de la pantalla los honderos apostados en las polis aliadas).'
+);

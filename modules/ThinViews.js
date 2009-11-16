@@ -112,3 +112,8 @@ Beastx.ThinViews.prototype.setTransportStyles = function() {
     ]]></>.toXMLString();
     GM_addStyle(default_style);
 }
+
+Beastx.registerModule(
+    'Thin Views',
+    'Este modulo sirve para sacar pedasos de la interface que no son utiles y ocupan espacio inutilmente en paginas donde el espacio es muy valioso, por ejemplo remueve los textos descriptivos de cada unidad en la vista del Cuartel.'
+);

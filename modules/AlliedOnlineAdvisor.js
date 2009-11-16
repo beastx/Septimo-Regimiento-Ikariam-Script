@@ -3,6 +3,7 @@
 // @version               0.1
 // @author                Beastx
 //
+// @history                0.2 change online icon
 // @history                0.1 Initial release
 // ==/UserScript==
 
@@ -93,3 +94,8 @@ Beastx.AlliedOnlineAdvisor.prototype.onGetRemoteDocumentLoadForDiplomacyAdvisor 
         }
     }
 }
+
+Beastx.registerModule(
+    'Allied Online Advisor',
+    'Este modulo muestra iconos en las ciudades de los aliados o en la pagina de los mensajes mostrandonos si nuestro companero esta online o no.'
+);

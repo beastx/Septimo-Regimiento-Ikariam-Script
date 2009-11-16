@@ -110,3 +110,8 @@ if (view == "embassy" || view == "diplomacyAdvisorAlly") {
 var endTime = (new Date).getTime();
     })()
 }
+
+Beastx.registerModule(
+    'Embassy Tools',
+    'Este modulo nos da diferentes herramientas en la pagina del Diplomatico y en la pagina de la embajada, como ordenar los usuarios por diferentes columnas, accesos directos a las polis de los miembros entre otras cosas.'
+);

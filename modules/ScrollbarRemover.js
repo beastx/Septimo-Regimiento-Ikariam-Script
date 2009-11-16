@@ -6,9 +6,9 @@
 // @history                0.1 Initial release
 // ==/UserScript==
 
-Beastx.ScrollBarRemover = function() {};
+Beastx.ScrollbarRemover = function() {};
 
-Beastx.ScrollBarRemover.prototype.init = function() {
+Beastx.ScrollbarRemover.prototype.init = function() {
     var css = "body {overflow-x: hidden !important;}";
     if (typeof GM_addStyle != "undefined") {
         GM_addStyle(css);
@@ -24,3 +24,8 @@ Beastx.ScrollBarRemover.prototype.init = function() {
         }
     }
 }
+
+Beastx.registerModule(
+    'Scrollbar Remover',
+    'Este modulo remueve el molesto scrollbar horizontal que aparece en Firefox (al menos en resoluciones de hasta 1280x1024).'
+);
