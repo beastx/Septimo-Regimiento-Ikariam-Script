@@ -9,7 +9,8 @@
 
 Beastx = {
     ScriptName: 'Beastx Base Ikariam Script',
-    HomePage: 'http://7moreg.beastx.com.ar/herramientas/'
+    HomePage: 'http://7moreg.beastx.com.ar/herramientas/',
+    registeredModules: []
 };
 
 Beastx.log = function(val, title, panel) {
@@ -79,6 +80,25 @@ Beastx.saveConfig = function () {
     Beastx.setGMValue('config', Beastx.Config);
 }
 
+Beastx.registerModule = function (name, description) {
+    this.registeredModules.push(
+        { id: VAR.camelCase(name), name: name, description: description }
+    );
+    if (!Beastx.Config.options[VAR.camelCase(name)]) {
+        if (!Beastx[VAR.camelCase(name)].prototype.getDefaultConfigs) {
+            Beastx[VAR.camelCase(name)].prototype.getDefaultConfigs = function() {
+                return { enabled: true };
+            }
+        }
+        Beastx[VAR.camelCase(name)].prototype.getDefaultConfigs.call();
+        Beastx.saveConfig();
+    }
+}
+
+Beastx.getRegisteredModules = function () {
+    return this.registeredModules
+}
+
 
 Beastx.Form = function() {}
     
@@ -131,3 +151,5 @@ Beastx.Form.prototype.save = function() {
         this.saver.save(value);
     }
 }
+
+Beastx.init('0.2');
