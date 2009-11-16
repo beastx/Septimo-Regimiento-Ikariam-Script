@@ -29,7 +29,7 @@ Beastx.CitiesList.prototype.loadCitiesData = function() {
         }
         return returnCities;
     }
-    var citiesElements = cleanCitiesList($$('#citySelect option.coords'));
+    var citiesElements = cleanCitiesList($$('#citySelect option'));
     this.cities = VAR.filter(citiesElements, DOM.createCaller(this, 'getCityObjectFromElement'));
     this.resourceObjectsUpdater();
 }
@@ -43,7 +43,12 @@ Beastx.CitiesList.prototype.saveCities = function() {
 
 Beastx.CitiesList.prototype.getCityObjectFromElement = function(cityElement) {
     var city = New(Beastx.CityObject, [ cityElement.value ]);
-    city.setData({ name: cityElement.innerHTML.split(']')[1].trim() });
+    var cityName = cityElement.innerHTML;
+    if (cityName.split(']').length > 1)  {
+        cityName = cityName.split(']')[1].replace('&nbsp;', '').trim();
+    }
+    city.setData({ name: cityName });
+    
     city.setData({ resourceTypeId: this.getCityResourceTypeIdFromComboTitle(cityElement.title) });
     if (city.getId() == this.getCurrentCityId() && IkaTools.getView() == 'city') {
         var cityPlayerId = 0;
@@ -146,6 +151,14 @@ Beastx.CitiesList.prototype.getBuildingsObjectsFromSavedData = function(savedDat
     return cityBuildings;
 }
 
+Beastx.CitiesList.prototype.isOwnCity = function(cityId) {
+    for (var i = 0; i < this.cities.length; ++i) {
+        if (this.cities[i].getId() == cityId) {
+            return true;
+        }
+    }
+    return false;
+}
 
 /***************************************************************
 *************** Get Current city Detail Data ******************
@@ -182,13 +195,16 @@ Beastx.CitiesList.prototype.getCurrentCityResourceObjects = function() {
 }
 
 Beastx.CitiesList.prototype.resourceObjectsUpdater = function() {
-    var cityResources = this.getCurrentCity().getResources();
-    for (var id in cityResources) {
-        var type = cityResources[id].getResourceTypeName();
-        var resource = cityResources[id];
-        resource.setData({
-            ammount: parseInt($$('#cityResources li.' + type)[0].childNodes[2].childNodes[0].nodeValue.replace(',', ''))
-        });
+    var currentCity = this.getCurrentCity();
+    if (currentCity) {
+        var cityResources = currentCity.getResources();
+        for (var id in cityResources) {
+            var type = cityResources[id].getResourceTypeName();
+            var resource = cityResources[id];
+            resource.setData({
+                ammount: parseInt($$('#cityResources li.' + type)[0].childNodes[2].childNodes[0].nodeValue.replace(',', ''))
+            });
+        }
     }
     setTimeout(DOM.createCaller(this, 'resourceObjectsUpdater'), 5000);
 }
@@ -208,9 +224,9 @@ Beastx.CitiesList.prototype.getCityById = function(cityId) {
 }
 
 Beastx.CitiesList.prototype.getCityByName = function(cityName) {
-    for (var i = 0; i < this.data.cities.length; ++ i) {
-        if (this.data.cities[i].getName() == cityName) {
-            return this.data.cities[i];
+    for (var i = 0; i < this.cities.length; ++ i) {
+        if (this.cities[i].getName() == cityName) {
+            return this.cities[i];
         }
     }
     return null;
