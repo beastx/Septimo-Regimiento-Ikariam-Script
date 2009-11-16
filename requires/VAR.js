@@ -33,6 +33,24 @@ VAR.isArray = function(a) {
     return typeof a == 'object' && a.constructor == Array;
 }
 
+VAR.inArrayWithCallBack = function(array, callBack) {
+    for (var i = 0; i < array.length; ++i) {
+        if (callBack(array[i])) {
+            return true;
+        }
+    }
+    return false;
+}
+
+VAR.inArray = function(array, item) {
+    for (var i = 0; i < array.length; ++i) {
+        if (array[i] == item) {
+            return true;
+        }
+    }
+    return false;
+}
+
 VAR.trim = function(s) {
     var i;
     for (i = 0; i < s.length; ++i) {
@@ -199,13 +217,17 @@ VAR.filter = function(list, callback) {
     return newList;
 }
 
-VAR.covertStringToCamelCase = function(stringVar) {
+VAR.camelCase = function(stringVar) {
     var wordArray = stringVar.split(' ');
     var returnString = '';
     for (var i = 0; i < wordArray.length; ++i) {
         returnString += VAR.ucfirst(wordArray[i]);
     }
     return returnString;
+}
+
+VAR.ucfirst = function(word) {
+    return word.substr(0, 1).toUpperCase() + word.substring(1).toLowerCase();
 }
 
 VAR.serialize = function(object) {
@@ -275,4 +297,13 @@ VAR.formatSeconds = function(seconds) {
     var text = minutes + ':' + seconds;
     text = hours > 0 ? hours + ':' + text : text;
     return text;
+}
+
+VAR.formatNumberToIkariam = function(number) {
+    var numberString = String(number);
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(numberString)) {
+        numberString = numberString.replace(rgx, '$1' + ',' + '$2');
+    }
+    return numberString;
 }
