@@ -86,6 +86,9 @@ Beastx.PlayerObject.prototype.getId = function() {
     return this.id;
 }
 
+Beastx.PlayerObject.prototype.getName = function() {
+    return this.name;
+}
 
 /***************************************************************
 *************** Tinkerman Specific Methods *****************
