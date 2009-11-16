@@ -1,15 +1,5 @@
 // ==UserScript==
 // @name                  Inline Score
-// @namespace       Beastx
-// @description        Inline Score
-// @include               http://*.ikariam.com/*
-
-// @require               http://ikariam.beastx/tools/userScripts/requires/Beastx.js
-// @require               http://ikariam.beastx/tools/userScripts/requires/VAR.js
-// @require               http://ikariam.beastx/tools/userScripts/requires/DOM.js
-// @require               http://ikariam.beastx/tools/userScripts/requires/IkaTools.js
-// @require               http://ikariam.beastx/tools/userScripts/requires/ScriptUpdater.js
-
 // @version               0.4
 // @author                Beastx
 //
@@ -27,6 +17,7 @@
 // @history                0.2 Complete code refactor
 // @history                0.1 Initial release
 // ==/UserScript==
+
 
 Beastx.InlineScore = function() {};
 
@@ -243,7 +234,6 @@ Beastx.InlineScore.prototype.getSelectedPlayerAllianceId = function() {
 }
 
 Beastx.InlineScore.prototype.getSelectedPlayerCityId = function() {
-    return getQueryString('', $$('ul.cityinfo')[0].childNodes[9].childNodes[3].href);
     return parseInt($$('ul#cities li.selected')[0].childNodes[5].id.replace('city_', ''));
 }
 
@@ -430,3 +420,28 @@ Beastx.InlineScore.prototype.requestAlliance = function(onLoadCallback) {
         }
     });
 }
+
+Beastx.InlineScore.prototype.getDefaultConfigs = function() {
+    Beastx.Config.options.InlineScore = {
+        enabled: true,
+        showAllianceData: true
+    }
+}
+
+Beastx.InlineScore.prototype.getConfigs = function() {
+    return {
+        showAllianceData: this.showAllianceCheckbox.checked
+    };
+}
+
+Beastx.InlineScore.prototype.getOptionBox = function() {
+    this.showAllianceCheckbox = this.checkbox('showLessButton', Beastx.Config.options.InlineScore.showAllianceData);
+    return this.keyValueTable([
+        { label: 'Mostrar Info Alianza', value: this.showAllianceCheckbox }
+    ]);
+}
+
+Beastx.registerModule(
+    'Inline Score',
+    'Nos muestra informacion de los diferentes puntajes de cada jugador en la vista Isla.'
+);
