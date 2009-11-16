@@ -14,6 +14,42 @@ Beastx.EmpireBoard.prototype.init = function() {
     (function() {
         // Old global vars
         
+// coding: utf-8
+// ==UserScript==
+// @name		Ikariam v3 Empire Board
+// @namespace	empire-board.ikariam
+// @version	170
+// @author		oliezekat
+// @description	Display population, resources, trading, transports, incomes, buildings, and army or fleet units overviews for each cities. Require Ikariam v.0.3.x server game. Support any countries/languages.
+// @require	http://userscripts.org/scripts/source/60774.user.js
+// @include	http://s*.ikariam.*/*
+// @exclude	http://support.ikariam.*/*
+// @exclude	http://*.ikariam.*/*?view=premium
+// @exclude	http://*.ikariam.*/*?view=premiumPayment
+// ==/UserScript==
+
+/**************************************************************************************************
+
+LAST CHANGES:
+
+Version 1.7.0:
+- Ordered buildings related to their context (population growth,  research, trading, diplomacy,  military, resources).
+- Ordered military units related to their battlefield's position (first line, flank, second line, artillery, etc). 
+- Add Slovenian translation by Americano.
+- Display research points per cities.
+- Fix tooltips behaviours.
+- Apply brown color if townhall is full with positive satisfaction by minimal wine usage (Cf WMIF idea).
+- Display friendly remaining times.
+
+PREVIOUS CHANGES:
+http://userscripts.org/topics/20976
+
+Based on "Ikariam Alarm And Overview Table" script (for Ikariam v0.2.8)
+http://userscripts.org/scripts/show/35995
+
+**************************************************************************************************/
+
+// Old global vars
 var server;
 var config;
 var PROGRESS_BAR_MODE; //have to be a global variable
@@ -38,149 +74,11 @@ EmpireBoard =
 	
 	/* Script metas */
 	ScriptName:		 'Ikariam Empire Board',
-	Version:		 169,
+	Version:		 170,
 	HomePage:		 '',
 	ScriptURL:		 '',
 	UserScriptsID:	 41051
 	};
-    
-if (!EmpireBoard.ARexx)
-	{
-	// ARexx* is a common component for Empire Board add-ons.
-	// (*) Addon Register for Embedded Execution.
-	
-	EmpireBoard.ARexx =
-		{
-		_Parent:		 null,
-		
-		/* ARexx metas */
-		ScriptName:		 'Empire Board ARexx',
-		Version:		 2,
-		HomePage:		 '',
-		ScriptURL:		 '',
-		UserScriptsID:	 60774
-		};
-		
-	/* Constructor */
-		
-	EmpireBoard.ARexx.Init = function(parent)
-		{
-		this._Parent = parent;
-		};
-		
-	/* Public methods */
-		
-	EmpireBoard.ARexx.RegisterAddOn = function(AddOn)
-		{
-		var EmpireBoardFrame = null;
-		var isOK = true;
-		
-		EmpireBoardFrame = document.getElementById("EmpireBoard");
-		if (EmpireBoardFrame == null)
-			{
-			isOK = false;
-			}
-		else if (EmpireBoardFrame.hasAttribute('version') == false)
-			{
-			isOK = false;
-			}
-		else if (parseInt(EmpireBoardFrame.getAttribute('version')) < AddOn.EmpireBoardRequiredVersion)
-			{
-			isOK = false;
-			}
-		
-		if (isOK == false)
-			{
-			// Empire Board not found, not ready, or wrong priority
-			this.Ikariam_Insert_Warning('Require <a href="http://userscripts.org/scripts/show/41051">Ikariam Empire Board</a> version '+AddOn.EmpireBoardRequiredVersion+' (or higher) with highest priority than this add-on.', AddOn.AddOnName);
-			return false;
-			}
-		else if (EmpireBoardFrame.innerHTML == '')
-			{
-			// Empire Board is probably disabled into some pages
-			return false;
-			}
-		else if (isOK == true)
-			{
-			AddOn._Parent = this._Parent;
-			
-			AddOn.ARexxVersion = this.Version;
-			
-			// Complete Add-On meta
-			if ((AddOn.UserScriptsID != undefined) && (AddOn.UserScriptsID != 0))
-				{
-				if ((AddOn.HomePage == undefined) || (AddOn.HomePage == ''))
-					{
-					AddOn.HomePage = 'http://userscripts.org/scripts/show/'+AddOn.UserScriptsID;
-					}
-				}
-			
-			// Ready to start
-			AddOn.Init(this._Parent);
-			
-			// Register into Empire Board settings
-			var EmpireBoardAddons = document.getElementById("EmpireBoardAddons");
-			if (EmpireBoardAddons != null)
-				{
-				var li = document.createElement('li');
-				li.setAttribute("arexx", this.Version);
-				if ((AddOn.UserScriptsID != undefined) && (AddOn.UserScriptsID != 0))
-					{
-					li.setAttribute("userscriptsid", AddOn.UserScriptsID);
-					}
-				
-				var AddOnTitle = '';
-				if ((AddOn.HomePage != undefined) && (AddOn.HomePage != ''))
-					{
-					AddOnTitle = '<a href="'+AddOn.HomePage+'" target="_blank">'+AddOn.AddOnName+'</a>';
-					}
-				else
-					{
-					AddOnTitle = '<a>'+AddOn.AddOnName+'</a>';
-					}
-				if ((AddOn.Version != undefined) && (AddOn.Version != '') && (AddOn.Version != 0))
-					{
-					AddOnTitle += ' (v. <i>'+AddOn.Version+'</i>)';
-					li.setAttribute("version", AddOn.Version);
-					}
-				AddOnTitle += '.';
-				li.innerHTML = AddOnTitle;
-				
-				EmpireBoardAddons.appendChild(li);
-				}
-			
-			return true;
-			}
-		};
-
-	/* Private methods */
-	
-	EmpireBoard.ARexx.DOM_Get_Nodes = function(query)
-		{
-		return document.evaluate(query, document, null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-		};
-	
-	EmpireBoard.ARexx.Ikariam_Insert_Warning = function(message, title)
-		{
-		var notices = document.getElementById('notices');
-		if (notices == null)
-			{
-			notices = document.createElement('div');
-			notices.id = 'notices';
-			var mainview = document.getElementById("mainview");
-			var buildingDescription = this.DOM_Get_Nodes("//div[@id='mainview']/div[contains(@class,'buildingDescription')]");
-			if (buildingDescription.snapshotLength >= 1)
-				{
-				mainview.insertBefore(notices, buildingDescription.snapshotItem(0).nextSibling);
-				}
-			}
-		notices.innerHTML = notices.innerHTML+'<div class="warning"><h5>'+title+'</h5><p>'+message+'</p></div>';
-		};
-
-	// Attach ARexx to EmpireBoard
-	EmpireBoard.ARexx.Init(EmpireBoard);
-	}
-
 
 EmpireBoard.Init = function()
 	{
@@ -219,7 +117,7 @@ EmpireBoard.CheckScriptUpdate = function()
 		{
 		var self = this;
 		var ScriptURL = 'http://userscripts.org/scripts/source/'+this.UserScriptsID+'.meta.js?since='+this.StartTime;
-		this.Updater.Check(ScriptURL, function(availableVersion) { self._CompareScriptUpdate(availableVersion); });
+		//~ this.Updater.Check(ScriptURL, function(availableVersion) { self._CompareScriptUpdate(availableVersion); });
 		}
 	else
 		{
@@ -545,9 +443,11 @@ EmpireBoard.Set_Common_Styles = function()
 	height: 10px;
 	}
 	#EmpireBoard .Bold,
+	#EmpireBoard .Brown,
 	#EmpireBoard .DarkRed,
 	#EmpireBoard .Red {font-weight: bold;}
 	#EmpireBoard .Green {  color: green !important;}
+	#EmpireBoard .Brown {  color: #8F1D1A !important;}
 	#EmpireBoard .DarkRed {  color: #CC3300 !important;}
 	#EmpireBoard .Red {  color: red !important;}
 	#EmpireBoard img.Safe { height: 11px; }
@@ -1635,53 +1535,7 @@ var buildings;
 var texts;
 var langtype;
 function getLocalizedTexts() {
-if (language == "de") { //german translation, thanks to Schneppi & xkaaay
-langtype = "";
-  buildings = {
-    "townHall"      : ["Rathaus", "Rathaus"],
-      "temple"      : ["Temple", "Temple"],
-    "academy"       : ["Academie", "Academie"],
-    "port"          : ["Handelshafen", "Handelshafen"],
-    "shipyard"      : ["Schiffswerft", "Schiffswerft"],
-    "warehouse"     : ["Lagerhaus", "Lagerhaus"],
-    "wall"          : ["Stadtmauer", "Stadtmauer"],
-    "tavern"        : ["Taverne", "Taverne"],
-    "museum"        : ["Museum", "Museum"],
-    "palace"        : ["Palast", "Palast"],
-    "palaceColony"  : ["Statthaltersitz", "Statthaltersitz"],
-    "embassy"       : ["Botschaft", "Botschaft"],
-    "branchOffice"  : ["Kontor", "Kontor"],
-    "safehouse"     : ["Versteck", "Versteck"],
-    "barracks"      : ["Kaserne", "Kaserne"],
-    "workshop"      : ["Erfinderwerkstatt", "Erfinderwerkstatt"],
-    "carpentering"  : ["Zimmerei", "Zimmerei"],
-    "forester"      : ["Forsthaus", "Forsthaus"],
-    "stonemason"    : ["Steinmetz", "Steinmetz"],
-    "glassblowing"  : ["Glasbläserei", "Glasbläserei"],
-    "winegrower"    : ["Winzerei", "Winzerei"],
-    "alchemist"     : ["Alchimistenturm", "Alchimistenturm"],
-    "architect"     : ["Architekturbüro", "Architekturbüro"],
-    "optician"      : ["Optiker", "Optiker"],
-    "vineyard"      : ["Kelterei", "Kelterei"],
-    "fireworker"    : ["Feuerwerksplatz", "Feuerwerksplatz"]
-  };
-  texts = {
-    "cityName"          : "Stadtname",
-    "currentlyBuilding" : "Zur Zeit im Bau",
-    "summary"           : "Gesamt:",
-    "hide_settings"     : "Verstecke Optionen",
-    "show_settings"     : "Zeige Optionen",
-    "Population"        : "Bevölkerung",
-    "finishedBuilding"  : "Bau abgeschlossen",
-    "Incomes"           : "Einkommen",
-    "Trading"           : "Handel",
-    "Wood"              : "Baumaterial",
-    "Wine"              : "Wein",
-    "Marble"            : "Marmor",
-    "Crystal"           : "Kristallglas",
-    "Sulfur"            : "Schwefel"
-  };
-} else if (language == "es") { //Spanish translation, thanks to dragondeluz, graff86, Crom
+if (language == "en") { //Spanish translation, thanks to dragondeluz, graff86, Crom
 		langtype = "";
 		buildings = {
 		"townHall" : ["Intendencia", "Intendencia"],
@@ -1715,14 +1569,15 @@ langtype = "";
 		"cityName": "Nombre de la ciudad", "currentlyBuilding": "Construyendo", "summary": "Totales",
 		"hide_settings": "Ocultar opciones", "show_settings": "Mostrar opciones",
 		"Population": "Población",
+		"Research": "Research",
 		"finishedBuilding": "Edificios terminados","Incomes":"Ingresos","Trading":"Comercio",
 		"Wood": "Madera", "Wine": "Vino", "Marble": "Mármol", "Crystal": "Cristal", "Sulfur": "Azufre"
 		}; 
-  } else {
-    langtype = ""; // Set "lf" for Rigth-to-Left languages, or leave blank
-    buildings = {
+}else {
+    langtype = "";
+		buildings = {
 		"townHall" : ["Intendencia", "Intendencia"],
-      "temple"      : ["Templo", "Templo"],
+      "temple"      : ["Temple", "Temple"],
 		"academy" : ["Academia", "Academia"],
 		"port" : ["Puerto comercial", "Puerto"],
 		"shipyard" : ["Astillero", "Astillero"],
@@ -1747,14 +1602,15 @@ langtype = "";
 		"optician" : ["Óptico", "Óptico"],
 		"vineyard" : ["Prensa de Vino", "Prensa"],
 		"fireworker" : ["Área de Pruebas Pirotécnicas", "Pirotécnica"]
-    };
-    texts = {
+		};
+		texts = {
 		"cityName": "Nombre de la ciudad", "currentlyBuilding": "Construyendo", "summary": "Totales",
 		"hide_settings": "Ocultar opciones", "show_settings": "Mostrar opciones",
 		"Population": "Población",
+		"Research": "Research",
 		"finishedBuilding": "Edificios terminados","Incomes":"Ingresos","Trading":"Comercio",
 		"Wood": "Madera", "Wine": "Vino", "Marble": "Mármol", "Crystal": "Cristal", "Sulfur": "Azufre"
-	};
+		}; 
   }
 }
 getLocalizedTexts();
@@ -2124,8 +1980,9 @@ function createResCounter(startTime, startAmount, factPerHour, showTooltip, maxA
 		
 		if (showTooltip == true) 
 			{
-		    tooltip = mynumberformat(intfactPerHour, true)+"/h<br> "+mynumberformat(dailyFact, true)+"/d";
-			if (intfactPerHour < 0) tooltip += "<br>&nbsp;" + floatFormat(-1 * (currAmount+arrAmount) / intfactPerHour, 1) + "h";
+		    tooltip = mynumberformat(intfactPerHour, true)+" / "+unsafeWindow.LocalizationStrings['timeunits']['short']['hour']+"<br> "+mynumberformat(dailyFact, true)+" / "+unsafeWindow.LocalizationStrings['timeunits']['short']['day'];
+			//if (intfactPerHour < 0) tooltip += "<br>&nbsp;" + floatFormat(-1 * (currAmount+arrAmount) / intfactPerHour, 1) + "h to empty";
+			if (intfactPerHour < 0) tooltip += "<br>&nbsp;" + getTimestring(-1 * (currAmount+arrAmount) / intfactPerHour * 60 * 60 * 1000) + " to empty";
 			}
 		}
 	else
@@ -2158,9 +2015,11 @@ function createResProgressBar(startTime, startAmount, factPerHour, maxCapacity, 
 			}
 	    else if (factPerHour > 0) {
 	      remhour = (maxCapacity - curres) / factPerHour;
-	      remaining = "<br>"+floatFormat(remhour, 1) + "h to full";
+	      //remaining = "<br>"+floatFormat(remhour, 1) + "h to full";
+		  remaining = "<br>"+getTimestring(remhour*60*60*1000)+" to full";
 	    } else if (factPerHour < 0) {
-	      remaining = "<br>"+floatFormat(curres / -factPerHour, 1) + "h to empty";
+	      //remaining = "<br>"+floatFormat(curres / -factPerHour, 1) + "h to empty";
+	      remaining = "<br>"+getTimestring((curres / -factPerHour)*60*60*1000) + " to empty";
 	    }
 	    var cl = "Normal";
 		var vperc = perc;
@@ -2277,17 +2136,20 @@ function myTimeCounterF() {
     var abstime = Math.round(c.getAttribute('counter'));
     hdata = (abstime - currenttime) / 1000;
     if (hdata > 0) {
+      var s = "";
+	/*
       var hday = Math.floor(hdata / 86400);
       var hhor = Math.floor((hdata - (hday * 86400)) / 3600);
       var hmin = Math.floor((hdata - (hday * 86400) - (hhor * 3600)) / 60);
       var hsec = Math.floor(hdata - (hday * 86400) - (hhor * 3600) - (hmin * 60));
-      var s = "";
       var b = false;
       if (b || hday > 0) { s += hday+"d "; b = true; }
       b = true; 
       if (b || hhor > 0) { s += hhor+":"; b = true; }
       if (b || hmin > 0) { s += EmpireBoard.Str.TwoDigit(hmin)+":"; b = true; }
       if (b || hsec > 0) { s += EmpireBoard.Str.TwoDigit(hsec)+""; b = true; }
+	  */
+	  s = getTimestring(hdata*1000);
       c.innerHTML = s;
     } else {
       c.innerHTML = "-";
@@ -2305,10 +2167,30 @@ function createTimeCounter(enddate) {
 }
 
 function createProd(prodPerHour, extraTooltip) {
+  if (prodPerHour == "-" || prodPerHour == "?") {
+    return prodPerHour;
+  }
   if (""+prodPerHour == "NaN" || ""+prodPerHour == "" || ""+prodPerHour == "0" || prodPerHour == undefined || ""+prodPerHour == "???") {
     return "";
   }
-  var tooltip = mynumberformat(Math.round(24 * prodPerHour), true)+"/d";
+  var tooltip = mynumberformat(Math.round(24 * prodPerHour), true)+" / "+unsafeWindow.LocalizationStrings['timeunits']['short']['day'];
+  if (extraTooltip != undefined) {
+    tooltip += ", "+extraTooltip;
+  }
+  return createTooltip(mynumberformat(Math.round(prodPerHour), true), tooltip);
+}
+
+function createResearch(prodPerHour, extraTooltip) {
+  if (prodPerHour == "-" || prodPerHour == "?") {
+    return prodPerHour;
+  }
+  if (""+prodPerHour == "0") {
+    return '+0';
+  }
+  if (""+prodPerHour == "NaN" || ""+prodPerHour == "" || prodPerHour == undefined || ""+prodPerHour == "???") {
+    return "";
+  }
+  var tooltip = mynumberformat(Math.round(24 * prodPerHour), true)+" / "+unsafeWindow.LocalizationStrings['timeunits']['short']['day'];
   if (extraTooltip != undefined) {
     tooltip += ", "+extraTooltip;
   }
@@ -2335,7 +2217,7 @@ function createIncome(prodPerHour, extraTooltip, classname)
 		}
 	else
 		{
-		var tooltip = mynumberformat(Math.round(24 * prodPerHour), true)+"/d";
+		var tooltip = mynumberformat(Math.round(24 * prodPerHour), true)+" / "+unsafeWindow.LocalizationStrings['timeunits']['short']['day'];
 		if ((extraTooltip != undefined) && (extraTooltip != ''))
 			{
 			tooltip += "<br>&nbsp;"+extraTooltip;
@@ -3141,9 +3023,9 @@ function applyArrivingGoodEvents()
 	var nodes = $x("//div[@id='EmpireBoard']//*[contains(@class,'MoreGoods')]");
 	for(var i=0; i<nodes.length; i++)
 		{
-		nodes[i].addEventListener('mouseover', getArrivingGoodsEvent, false);
-		nodes[i].addEventListener('mousemove', EmpireBoard.Tooltip.mouseMove, false);
-		nodes[i].addEventListener('mouseout', EmpireBoard.Tooltip.hide, false);
+		nodes[i].addEventListener('mouseover', function(e) { getArrivingGoodsEvent(e); }, false);
+		nodes[i].addEventListener('mousemove', function(e) { EmpireBoard.Tooltip.mouseMove(e); }, false);
+		nodes[i].addEventListener('mouseout', function(e) { EmpireBoard.Tooltip.hide(e); }, false);
 		}
 	}
 	
@@ -3278,7 +3160,7 @@ function getArrivingGoodsTTC(city_id, resName)
 			tooltip += "<tr class=Small>"+
 						"<td>"+prodSign+"</td>"+
 						"<td align=right>"+mynumberformat(Math.abs(hourlyprod), false) + "&nbsp;</td>"+
-						"<td align=left>x&nbsp;" + floatFormat(restHours, 1) + "h</td>"+
+						"<td align=left>x&nbsp;" + floatFormat(restHours, 1) + unsafeWindow.LocalizationStrings['timeunits']['short']['hour']+"</td>"+
 						"</tr>";
 			tooltip += "<tr class=Small>"+
 						"<td>=</td>"+
@@ -3632,19 +3514,20 @@ function getEstimatedPopulation(population, startTime, currenttime, startHappine
 
 function getGrowthRemainingHours(population, maxPopulation, startTime, happiness) {
   if (maxPopulation - population > happiness) {
-    return "&#8734;h";
+    return "&#8734;"+unsafeWindow.LocalizationStrings['timeunits']['short']['hour'];
   }
   var time = Number(startTime);
   while (population < maxPopulation) {
     var t = getOnePeopleGrowthTime(happiness);
     if (t == "NaN") {
-      return "&#8734;h";
+      return "&#8734;"+unsafeWindow.LocalizationStrings['timeunits']['short']['hour'];
     }
     time += t;
     population++;
     happiness--;
   }
-  return floatFormat((time - Number(startTime)) / 1000 / 3600, 1) + "h";
+  //return floatFormat((time - Number(startTime)) / 1000 / 3600, 1) + "h";
+  return getTimestring(time - Number(startTime));
 }
 
 function smartDateFormat(time, showElapsedTime, elapsedTimeSeparator) {
@@ -3680,16 +3563,44 @@ function smartDateFormat(time, showElapsedTime, elapsedTimeSeparator) {
   return t;
 }
 
-function createLastUpdateAsTooltip(content, time)
+function getTimestring(timestamp,maxDigits,delimiter,approx,showunits,zerofill)
 	{
-	if (time == undefined)
+	if(typeof timestamp=="undefined"){timestamp=0;}
+	if(typeof maxDigits=="undefined"){maxDigits=2;}
+	if(typeof delimiter=="undefined"){delimiter=" ";}
+	if(typeof approx=="undefined"){approx="";}
+	if(typeof showunits=="undefined"){showunits=true;}
+	if(typeof zerofill=="undefined"){zerofill=false;}
+	var timeunits=[];
+	timeunits['day']=60*60*24;
+	timeunits['hour']=60*60;
+	timeunits['minute']=60;
+	timeunits['second']=1;
+	var loca=[];
+	loca['day']=(showunits)?unsafeWindow.LocalizationStrings['timeunits']['short']['day']:"";
+	loca['hour']=(showunits)?unsafeWindow.LocalizationStrings['timeunits']['short']['hour']:"";
+	loca['minute']=(showunits)?unsafeWindow.LocalizationStrings['timeunits']['short']['minute']:"";
+	loca['second']=(showunits)?unsafeWindow.LocalizationStrings['timeunits']['short']['second']:"";
+	timestamp=Math.floor(timestamp/1000);
+	var timestring="";
+	for(var k in timeunits)
 		{
-		return content;
+		var nv=Math.floor(timestamp/timeunits[k]);
+		if(maxDigits>0&&(nv>0||(zerofill&&timestring!="")))
+			{
+			timestamp=timestamp-nv*timeunits[k];
+			if(timestring!="")
+				{
+				timestring+=delimiter;
+				if(nv<10&&nv>0&&zerofill){nv="0"+nv;}
+				if(nv==0){nv="00";}
+				}
+			timestring+=nv+loca[k];
+			maxDigits--;
+			}
 		}
-	else
-		{
-		return createTooltip(content, "Last update: "+smartDateFormat(time, true));
-		}
+	if(timestamp>0){timestring=approx+timestring;}
+	return timestring;
 	}
 
 function Resource() {
@@ -4312,21 +4223,26 @@ if (city_idmainView > 0) {
 
   if (EmpireBoard.Ikariam.View() == "tavern")
    {
-    function storeWineUsage() {
-      try {
-        var city_id = EmpireBoard.DOM.Get_First_Node_Value("//form[@id='wineAssignForm']/input[@type='hidden' and @name='id']");
-        var city = getCity(city_id);
-        var n = document.getElementById("wineAmount");
-		if (city.wineUsageId != n.selectedIndex)
+    function storeWineUsage()
+		{
+		try
 			{
-			setViewRqTime('townHall', city_id);
+			var city_id = EmpireBoard.DOM.Get_First_Node_Value("//form[@id='wineAssignForm']/input[@type='hidden' and @name='id']");
+			var city = getCity(city_id);
+			var n = document.getElementById("wineAmount");
+			if (city.wineUsageId != n.selectedIndex)
+				{
+				setViewRqTime('townHall', city_id);
+				}
+			city.wineUsageId = n.selectedIndex;
+			city.wineUsage = tavernWineUsage[n.selectedIndex] - getSavedWine();
+			EmpireBoard.DB.Save();
 			}
-        city.wineUsageId = n.selectedIndex;
-        city.wineUsage = tavernWineUsage[n.selectedIndex] - getSavedWine();
-        EmpireBoard.DB.Save();
-      } catch (e) {
-      }
-    }
+		catch (e)
+			{
+			}
+		}
+		
 	// Fix for v3
     function getSavedWine() {
       try {
@@ -4358,6 +4274,10 @@ if (city_idmainView > 0) {
 		
 		var n = document.getElementById("inputWorkersSubmit");
 		n.addEventListener("click", reportAcademy, false);
+		
+		var n = document.getElementById("valueResearch");
+		res.buildings["academy"].Research = EmpireBoard.Str.To_Integer(n.textContent);
+		EmpireBoard.Log.Add('valueResearch = '+res.buildings["academy"].Research);
 		}
 		
 	if (EmpireBoard.Ikariam.View() == 'temple')
@@ -4809,8 +4729,46 @@ function renderTables() {
 
   if (TABLE_BUILDINGS) 
 	{
-	var buildingsCount = [];
+	var orderedBuildings = {}; // And usage topic
+	
+	orderedBuildings['townHall']			 = 'growth';
+	orderedBuildings['palace']				 = 'growth';
+	orderedBuildings['palaceColony']		 = 'growth';
+	orderedBuildings['tavern']				 = 'growth';
+	orderedBuildings['museum']				 = 'growth';
+	
+	orderedBuildings['academy']				 = 'research';
+	orderedBuildings['workshop']			 = 'research';
+	orderedBuildings['temple']				 = 'research';
+	
+	orderedBuildings['embassy']				 = 'diplomacy';
+	
+	orderedBuildings['warehouse']			 = 'trading';
+	orderedBuildings['port']				 = 'trading';
+	orderedBuildings['branchOffice']		 = 'trading';
+	
+	orderedBuildings['wall']				 = 'military';
+	orderedBuildings['safehouse']			 = 'military';
+	orderedBuildings['barracks']			 = 'military';
+	orderedBuildings['shipyard']			 = 'military';
+	
+	orderedBuildings['forester']			 = 'wood';
+	orderedBuildings['carpentering']		 = 'wood';
+
+	orderedBuildings['winegrower']			 = 'wine';
+	orderedBuildings['vineyard']			 = 'wine';
+	
+	orderedBuildings['stonemason']			 = 'marble';
+	orderedBuildings['architect']			 = 'marble';
+	
+	orderedBuildings['glassblowing']		 = 'crystal';
+	orderedBuildings['optician']			 = 'crystal';
+
+	orderedBuildings['alchemist']			 = 'sulfur';
+	orderedBuildings['fireworker']			 = 'sulfur';
+	
 	var CityId;
+	var buildingsCount = [];
 	var i = 0;
 	for (CityId in Cities)
 		{
@@ -4829,20 +4787,24 @@ function renderTables() {
 
 	s += "<thead><tr><th class='city_name' nowrap>"+texts["cityName"]+"</th>";
 	s += "<th class='actions' nowrap></th>";
-	var firstStyle = "lf";
+	var firstStyle = "";
 	var buildsNum = 0;
-	for (key in buildings) 
+	var lastTopic = '';
+	for (key in orderedBuildings) 
 		{
 		if (buildingsCount[key] > 0)
 			{
 			// Fix for v3
 			var colspan = (buildingsCount[key] > 1) ? ' colspan='+buildingsCount[key] : '';
-			s += "<th"+colspan+" class='"+firstStyle+" build_name"+buildingsCount[key]+" "+key+"' nowrap "+createTooltipAttribute(buildings[key][0])+">"+buildings[key][1]+"</th>";
-			firstStyle = "";
+			if (lastTopic != orderedBuildings[key]) { firstStyle = "lf"; } else { firstStyle = ""; }
+
+			s += "<th"+colspan+" building='"+key+"' class='"+firstStyle+" build_name"+buildingsCount[key]+" "+key+"' nowrap "+createTooltipAttribute(buildings[key][0])+">"+buildings[key][1]+"</th>";
+
+			lastTopic = orderedBuildings[key];
 			buildsNum++;
 			}
 		}
-	if (buildsNum <= 1) s += "<th class='"+firstStyle+"'></th><th></th><th></th><th></th><th></th><th></th>";
+	if (buildsNum <= 1) s += "<th class='lf'></th><th></th><th></th><th></th><th></th><th></th>";
 	s += "</tr></thead>";
 
     s += "<tbody>";
@@ -4858,11 +4820,14 @@ function renderTables() {
 		var usedspaces = getCityBuildingsCount(CityId, 0);
 		s += "<td class='city_name' nowrap>"+createLinkToChangeCity(Cities[CityId].name, CityId, i, (usedspaces > 0) ? 15-usedspaces : '', 'Green', 'Available free spaces')+"</td>";
 		s += "<td class='actions' nowrap>"+createLinkToCityView(CityId)+"</td>";
-		var firstStyle = "lf";
-		for (key in buildings)
+		var firstStyle = "";
+		var lastTopic = '';
+		for (key in orderedBuildings)
 			{
 			if (buildingsCount[key] > 0)
 				{
+				if (lastTopic != orderedBuildings[key]) { firstStyle = "lf"; } else { firstStyle = ""; }
+				
 				var buildingCount = 0;
 				if (res.buildings[key] != undefined)
 					{
@@ -4953,14 +4918,14 @@ function renderTables() {
 							s += "<td class='"+firstStyle+currentBuildingStyle+"'>"+levellink+"</td>";
 							}
 						buildingCount++;
-						firstStyle = "lfd";
+						firstStyle = '';
 						}
 					}
 				else
 					{
 					s += "<td class='"+firstStyle+"'>-&nbsp;</td>";
 					buildingCount++;
-					firstStyle = "lfd";
+					firstStyle = '';
 					}
 
 				if (buildingCount < buildingsCount[key])
@@ -4968,14 +4933,14 @@ function renderTables() {
 					for (var j = buildingCount; j < buildingsCount[key]; j++)
 						{
 						s += "<td class='"+firstStyle+"'>-&nbsp;</td>";
-						firstStyle = "lfd";
+						firstStyle = '';
 						}
 					}
 
-				firstStyle = "";
+				lastTopic = orderedBuildings[key];
 				}
 			}
-		if (buildsNum <= 1) s += "<td class='"+firstStyle+"'></td><td></td><td></td><td></td><td></td><td></td>";
+		if (buildsNum <= 1) s += "<td class='lf'></td><td></td><td></td><td></td><td></td><td></td>";
 		s += "</tr>";
 		i++;
 		}
@@ -4983,7 +4948,7 @@ function renderTables() {
     s += "</tbody>";
 	
 	s += "<tfoot></tfoot></table>";
-    s += "<p class='Caption'>(<span class=Green>1-14</span>) espacios disponibles para edificios. (<span class=Red>!</span>) necesita recargar para actualizar la informacion.</p>";
+    s += "<p class='Caption'>(<span class=Green>1-14</span>) available free spaces for new buildings. (<span class=Red>!</span>) require your attention to update overview's data.</p>";
 	s += "</div>";
 	}
 
@@ -4993,12 +4958,13 @@ function renderTables() {
     s += "<th class='city_name' nowrap>"+texts["cityName"]+"</th>"+
 		 "<th class='actions' nowrap>"+createLinkToFinanceNavyViews()+"</th>"+
          "<th colspan=3 class='lf population'>"+texts["Population"]+"</th>"+
+         "<th colspan=1 class='lf research'>"+texts["Research"]+"</th>"+
+         "<th colspan=1 class='lf incomes'>"+texts["Incomes"]+"</th>"+
          "<th colspan=2 class='lf wood'>"+texts["Wood"]+"</th>"+
          "<th colspan=3 class='lf wine'>"+texts["Wine"]+"</th>"+
          "<th colspan=2 class='lf marble'>"+texts["Marble"]+"</th>"+
          "<th colspan=2 class='lf crystal'>"+texts["Crystal"]+"</th>"+
-         "<th colspan=2 class='lf sulfur'>"+texts["Sulfur"]+"</th>"+
-         "<th colspan=1 class='lf incomes'>"+texts["Incomes"]+"</th>";
+         "<th colspan=2 class='lf sulfur'>"+texts["Sulfur"]+"</th>";
     s += "</tr></thead>";
 	
     s += "<tbody>";
@@ -5008,6 +4974,7 @@ function renderTables() {
 	sumres.growth = 0;
 	sumres.Income = 0;
 	sumres.reservedGold = '';
+	sumres.Research = 0;
     var sumProd = new Resource("");
     sumProd.wineUsage = 0;
     var sumArTr = new Resource("");
@@ -5111,6 +5078,17 @@ function renderTables() {
 				}
 			}
 		}
+		
+	var Research = '-';
+	if (getBuildingLevel(CityId, "academy", 0) > 0)
+		{
+		Research = getArrValue(res.buildings["academy"],"Research","?");
+		
+		if (Research != '?')
+			{
+			sumres.Research += Research;
+			}
+		}
 
       //var wineRemainingHours = undefined;
 	  var wineUsageHtml = ''+wineUsage;
@@ -5172,9 +5150,14 @@ function renderTables() {
 	var growthStyle = "";
 	if (parseInt(population) >= parseInt(spacetotal) + parseInt(bonusspace))
 		{
-		if (growth >= 0.20) 
+		growthRemainingHours = '';
+		if (growth >= 1.20) 
 			{
 			townHallStyle = " DarkRed";
+			}
+		else if (growth >= 0.20) 
+			{
+			townHallStyle = " Brown";
 			}
 		else
 			{
@@ -5231,7 +5214,12 @@ function renderTables() {
 			   "</td>"+
                "<td>"+spacetotal+"</td>"+
                "<td class='"+growthStyle+"'>"+(growth != '?' ? '<img src="'+EmpireBoard.Ikariam.Get_Happiness_ImgSrc(growth)+'" align=left height=18 hspace=2 vspace=0>' : '')+createTooltip(floatFormat(growth,2,true), growthRemainingHours)+"</td>"+
-           "<td class='lf' resource='wood'>"+
+           "<td class='lf'>"+createResearch(Research)+"</td>"+
+           "<td class='lf'>"+
+							createIncome(Income)+
+							createReservedGold(reservedGold)+
+							"</td>"+
+			"<td class='lf' resource='wood'>"+
 							  createLinkToResourceCond(true, createResCounter(res.prodtime, res.wood, res.prodwood, false, maxcwood, res.tradewood, maxsafewood), res.island_id, CityId, i)+
 							  getArrivingGoods(CityId, "wood", res.tradewood, curres.wood, arrres.wood)+
 							  createResProgressBar(res.prodtime, res.wood + arrres.wood, res.prodwood, maxcwood - res.tradewood, maxsafewood)+
@@ -5261,11 +5249,7 @@ function renderTables() {
 							  getArrivingGoods(CityId, "sulfur", res.tradesulfur, curres.sulfur, arrres.sulfur)+
 							  createResProgressBar(res.prodtime, res.sulfur + arrres.sulfur, res.prodsulfur, maxcother - res.tradesulfur, maxsafeother)+
 							  "</td>"+
-               "<td>"+createProd(res.prodsulfur)+"</td>"+
-           "<td class='lf'>"+
-							createIncome(Income)+
-							createReservedGold(reservedGold)+
-							"</td>";
+               "<td>"+createProd(res.prodsulfur)+"</td>";
       s += "</tr>";
 	 i++;
     }
@@ -5285,7 +5269,8 @@ function renderTables() {
 			{
 			goldStyle = 'DarkRed';
 			}
-		goldRemainingHours = floatFormat(RemainingHours, 1) + " h";
+		//goldRemainingHours = floatFormat(RemainingHours, 1) + " h";
+		goldRemainingHours = getTimestring(RemainingHours*60*60*1000)+" to expense";
 		}
 	
     s += "<tfoot><tr>";
@@ -5293,6 +5278,11 @@ function renderTables() {
          "<td class='lf'>"+mynumberformat(sumres.population)+"</td>"+
          "<td>"+mynumberformat(sumres.spacetotal)+"</td>"+
          "<td>"+floatFormat(sumres.growth,2,true)+"</td>"+
+         "<td class='lf'>"+createResearch(sumres.Research)+"</td>"+
+         "<td class='lf'>"+
+			createIncome(sumres.Income, goldRemainingHours, goldStyle)+
+			createReservedGold(sumres.reservedGold)+
+			"</td>"+
          "<td class='lf'>"+
 							createResCounter(EmpireBoard.StartTime, sumres.wood, sumProd.wood)+
 							createMoreGoods(sumArTr.wood)+
@@ -5318,14 +5308,10 @@ function renderTables() {
 							createResCounter(EmpireBoard.StartTime, sumres.sulfur, sumProd.sulfur)+
 							createMoreGoods(sumArTr.sulfur)+
 							"</td>"+
-         "<td>"+createProd(sumProd.sulfur)+"</td>"+
-         "<td class='lf'>"+
-			createIncome(sumres.Income, goldRemainingHours, goldStyle)+
-			createReservedGold(sumres.reservedGold)+
-			"</td>";
+         "<td>"+createProd(sumProd.sulfur)+"</td>";
     s += "</tr></tfoot>";
     s += "</table>";
-    s += "<p class='Caption'>(<span class=Green>1-9</span>) puntos de accion disponibles. (<span class=Red>!</span>) necesita recargar para actualizar informacion. (<img src='skin/layout/icon-wall.gif' class='Safe' />) recursos seguros ante un saqueo. (<span class=Green>*</span>) recursos que ya llegaron, necesita recargar para actualizar.</p>";
+    s += "<p class='Caption'>(<span class=Green>1-9</span>) available action points. (<span class=Red>!</span>) require your attention to update overview's data. (<img src='skin/layout/icon-wall.gif' class='Safe' />) resources safe against pillaging. (<span class=Green>*</span>) some resources delivered.</p>";
 	s += "</div>";
   }
 
@@ -5337,28 +5323,28 @@ function renderTables() {
 		{
 		var names = config["unitnames"];
 		
-		var orderedUnits = {  } ;
-		orderedUnits['unit spearman']		 = 0;
-		orderedUnits['unit phalanx']		 = 0;
-		orderedUnits['unit steamgiant']		 = 0;
-		orderedUnits['unit swordsman']		 = 0;
-		orderedUnits['unit slinger']		 = 0;
-		orderedUnits['unit archer']			 = 0;
-		orderedUnits['unit marksman']		 = 0;
-		orderedUnits['unit ram']			 = 0;
-		orderedUnits['unit catapult']		 = 0;
-		orderedUnits['unit mortar']			 = 0;
-		orderedUnits['unit gyrocopter']		 = 0;
-		orderedUnits['unit bombardier']		 = 0;
-		orderedUnits['unit cook']			 = 0;
-		orderedUnits['unit medic']			 = 0;
-		orderedUnits['unit ship_ram']			 = 0;
-		orderedUnits['unit ship_ballista']		 = 0;
-		orderedUnits['unit ship_catapult']		 = 0;
-		orderedUnits['unit ship_mortar']		 = 0;
-		orderedUnits['unit ship_flamethrower']	 = 0;
-		orderedUnits['unit ship_steamboat']		 = 0;
-		orderedUnits['unit ship_submarine']		 = 0;
+		var orderedUnits = {}; // And type value
+		orderedUnits['unit phalanx']			 = 'army line1';
+		orderedUnits['unit steamgiant']			 = 'army line1';
+		orderedUnits['unit spearman']			 = 'army flank';
+		orderedUnits['unit swordsman']			 = 'army flank';
+		orderedUnits['unit slinger']			 = 'army line2';
+		orderedUnits['unit archer']				 = 'army line2';
+		orderedUnits['unit marksman']			 = 'army line2';
+		orderedUnits['unit ram']				 = 'army artillery';
+		orderedUnits['unit catapult']			 = 'army artillery';
+		orderedUnits['unit mortar']				 = 'army artillery';
+		orderedUnits['unit gyrocopter']			 = 'army air';
+		orderedUnits['unit bombardier']			 = 'army air';
+		orderedUnits['unit cook']				 = 'army support';
+		orderedUnits['unit medic']				 = 'army support';
+		orderedUnits['unit ship_ram']			 = 'fleet line1';
+		orderedUnits['unit ship_flamethrower']	 = 'fleet line1';
+		orderedUnits['unit ship_steamboat']		 = 'fleet line1';
+		orderedUnits['unit ship_ballista']		 = 'fleet line2';
+		orderedUnits['unit ship_catapult']		 = 'fleet line2';
+		orderedUnits['unit ship_mortar']		 = 'fleet line2';
+		orderedUnits['unit ship_submarine']		 = 'fleet submarine';
 		
 		var CityId;
 		var i = 0;
@@ -5388,14 +5374,19 @@ function renderTables() {
 	s += "<th class='actions' nowrap>"+createLinkToMilitaryAdvisorView()+"</th>";
 	if (usedIndexesCount > 0)
 		{
-		var firstStyle = "lf";
+		var firstStyle = "";
+		var lastTopic = '';
 		for(key in orderedUnits)
 			{
 			var name = names[key];
 			if (usedIndexes[key] == 1) 
 				{
+				if (lastTopic != orderedUnits[key]) { firstStyle = "lf"; } else { firstStyle = ""; }
+				
 				s += "<th class='"+firstStyle+" unit_name "+TrimUnitID(key)+"' nowrap "+createTooltipAttribute(name)+">"+Trim(name)+"</th>";
 				firstStyle = "";
+				
+				lastTopic = orderedUnits[key];
 				}
 			}
 		}
@@ -5421,10 +5412,14 @@ function renderTables() {
 		s += "<td class='actions' nowrap>"+createLinkToMilitaryView(CityId)+"<br />"+createLinkToDeploy(CityId)+"</td>";
 		if (usedIndexesCount > 0)
 			{
-			var firstStyle = "lf";
+			var firstStyle = "";
+			var lastTopic = '';
 			for(key in orderedUnits)
 				{
-				if (usedIndexes[key] == 1) {
+				if (usedIndexes[key] == 1) 
+					{
+					if (lastTopic != orderedUnits[key]) { firstStyle = "lf"; } else { firstStyle = ""; }
+				
 					var unitCount = getIntValue(getArrValue(getArrValue(res.units, key), "count", "0"), 0);
 					if (unitCount == 0)
 						{
@@ -5446,7 +5441,8 @@ function renderTables() {
 										mynumberformat(unitCount)+
 										unitConstructionHTML+
 										"</td>";
-					firstStyle = "";
+				
+					lastTopic = orderedUnits[key];
 					}
 				}
 			}
@@ -5461,11 +5457,14 @@ function renderTables() {
 	s += "<td colspan=2>"+texts["summary"]+"</td>";
 	if (usedIndexesCount > 0)
 		{
-		var firstStyle = "lf";
+		var firstStyle = "";
+		var lastTopic = '';
 		for(key in orderedUnits)
 			{
 			if (usedIndexes[key] == 1)
 				{
+				if (lastTopic != orderedUnits[key]) { firstStyle = "lf"; } else { firstStyle = ""; }
+
 				var unitConstructionHTML = '<font class="More">-</font>';
 				if (sumConstruction[key] > 0)
 					{
@@ -5475,14 +5474,15 @@ function renderTables() {
 								mynumberformat(sum[key])+
 								unitConstructionHTML+
 								"</td>";
-				firstStyle = "";
+
+				lastTopic = orderedUnits[key];
 				}
 			}
 		}
 	else s += "<td class='lf'></td><td></td><td></td><td></td><td></td><td></td><td></td>";
 	s += "</tr></tfoot>";
 	s += "</table>";
-    s += "<p class='Caption'>(<span class=Green>1-9</span>) puntos de accon disponibles. (<span class=Red>!</span>) necesita recagar para actualizar informacion.</p>";
+    s += "<p class='Caption'>(<span class=Green>1-9</span>) available action points. (<span class=Red>!</span>) require your attention to update overview's data.</p>";
 	s + "</div>";
 	}
 
@@ -5605,7 +5605,7 @@ function renderTables() {
     t.appendChild(createRowChk("Show buildings table:", "TABLE_BUILDINGS", TABLE_BUILDINGS));
     t.appendChild(createRowChk("Show army and fleet table:", "TABLE_ARMYFLEET", TABLE_ARMYFLEET));
     t.appendChild(createRowSlct("Resource progress bar mode:", "PROGRESS_BAR_MODE", PROGRESS_BAR_MODE, {off: "off", time: "based on remaining time", percent: "based on fullness percentage"}));
-    t.appendChild(createRowSlct("Language:", "LANGUAGE", language, {"": "Automatic from server name",ae: "العربية", en: "English", hu: "Magyar", de: "Deutsch", cz: "Czech", tr: "Turkish", es: "Espanol", ba: "Bosnian", it: "Italiano", pt: "Portuguese", fr: "Français", pl: "Polish", ro: "Romanian", gr: "Greek", cn: "Chinese", nl: "Dutch", cz: "Czech", vn: "Vietnamese", tw: "Chinese (traditional)", fi: "Finnish", se: "Swedish", il: "Hebrew", sk: "Slovak", bg: "Bulgarian"}));
+    t.appendChild(createRowSlct("Language:", "LANGUAGE", language, {"": "Automatic from server name",ae: "العربية", en: "English", hu: "Magyar", de: "Deutsch", cz: "Czech", tr: "Turkish", es: "Espanol", ba: "Bosnian", it: "Italiano", pt: "Portuguese", fr: "Français", pl: "Polish", ro: "Romanian", gr: "Greek", cn: "Chinese", nl: "Dutch", cz: "Czech", vn: "Vietnamese", tw: "Chinese (traditional)", fi: "Finnish", se: "Swedish", il: "Hebrew", sk: "Slovak", bg: "Bulgarian", sl: "Slovenian"}));
     
     var tr = document.createElement('tr');
     t.appendChild(tr);
@@ -5670,7 +5670,7 @@ function renderTables() {
       p.appendChild(n);
 	  
 	  // footer
-	  //~ span.appendChild(p);
+	  span.appendChild(p);
     }
 	
   //myTimeCounterF(200, true); 
@@ -5725,14 +5725,14 @@ function TrimIsland100(str){
 EmpireBoard.Tooltip =
 	{
 	_Parent: null,
-    // setup properties of tooltip object
-    id:"EmpireBoardTooltip",
-    offsetx : 10,
-    offsety : 10,
-    _x : 0,
-    _y : 0,
-    _tooltipElement:null,
-    _saveonmouseover:null
+	// setup properties of tooltip object
+	id:"EmpireBoardTooltip",
+	offsetx : 10,
+	offsety : 10,
+	_x : 0,
+	_y : 0,
+	_tooltipElement:null,
+	_saveonmouseover:null
 	};
 	
 EmpireBoard.Tooltip.Init = function(parent)
@@ -5778,93 +5778,164 @@ EmpireBoard.Tooltip.innerHTML = function (Content, Title)
 
 EmpireBoard.Tooltip.show = function (htmlelement)
 	{
-	if(document.getElementById)
+	if (document.getElementById)
 		{
-        EmpireBoard.Tooltip._tooltipElement = document.getElementById(EmpireBoard.Tooltip.id);
+		this._tooltipElement = document.getElementById(this.id);
 		}
 	else if ( document.all )
 		{
-        EmpireBoard.Tooltip._tooltipElement = document.all[EmpireBoard.Tooltip.id].style;
+		this._tooltipElement = document.all[this.id].style;
 		}
 	
-    EmpireBoard.Tooltip._tooltipElement.innerHTML = htmlelement;
+	this._tooltipElement.innerHTML = htmlelement;
 
-    EmpireBoard.Tooltip.moveTo(EmpireBoard.Tooltip._x + EmpireBoard.Tooltip.offsetx , EmpireBoard.Tooltip._y + EmpireBoard.Tooltip.offsety);
+	this.moveTo(this._x + this.offsetx , this._y + this.offsety);
 
-    if (EmpireBoard.Tooltip._tooltipElement.style)
+	if (this._tooltipElement.style)
 		{
-        EmpireBoard.Tooltip._tooltipElement.style.visibility ="visible";
+		this._tooltipElement.style.visibility ="visible";
 		}
 	else
 		{
-        EmpireBoard.Tooltip._tooltipElement.visibility = "visible";
+		this._tooltipElement.visibility = "visible";
 		}
+		
 	return false;
 	};
 
 EmpireBoard.Tooltip.hide = function(e)
 	{
-    if(EmpireBoard.Tooltip._tooltipElement.style){
-        EmpireBoard.Tooltip._tooltipElement.style.visibility ="hidden";
-    }else{
-        EmpireBoard.Tooltip._tooltipElement.visibility = "hidden";
-    }
+	if (this._tooltipElement.style)
+		{
+		this._tooltipElement.style.visibility ="hidden";
+		}
+	else
+		{
+		this._tooltipElement.visibility = "hidden";
+		}
 	};
 
 // Moves the tooltip element
 EmpireBoard.Tooltip.mouseMove = function(e)
 	{
-   // we don't use "this" because this method is assign to an event of document
-   // and so is dereferenced
-    if(e == undefined)
-        e = event;
+	// we don't use "this" because this method is assign to an event of document
+	// and so is dereferenced
+	if (e == undefined) e = event;
 
-    if( e.pageX != undefined){ // gecko, konqueror,
-        EmpireBoard.Tooltip._x = e.pageX;
-        EmpireBoard.Tooltip._y = e.pageY;
-    }else if(event != undefined && event.x != undefined && event.clientX == undefined){ // ie4 ?
-        EmpireBoard.Tooltip._x = event.x;
-        EmpireBoard.Tooltip._y = event.y;
-    }else if(e.clientX != undefined ){ // IE6,  IE7, IE5.5
-        if(document.documentElement){
-            EmpireBoard.Tooltip._x = e.clientX + ( document.documentElement.scrollLeft || document.body.scrollLeft);
-            EmpireBoard.Tooltip._y = e.clientY + ( document.documentElement.scrollTop || document.body.scrollTop);
-        }else{
-            EmpireBoard.Tooltip._x = e.clientX + document.body.scrollLeft;
-            EmpireBoard.Tooltip._y = e.clientY + document.body.scrollTop;
-        }
-    /*}else if(event != undefined && event.x != undefined){ // IE6,  IE7, IE5.5
-        tooltip.x = event.x + ( document.documentElement.scrollLeft || document.body.scrollLeft);
-        tooltip.y = event.y + ( document.documentElement.scrollTop || document.body.scrollTop);
-    */
-    }else{
-        EmpireBoard.Tooltip._x = 0;
-        EmpireBoard.Tooltip._y = 0;
-    }
+	if (e.pageX != undefined)
+		{ // gecko, konqueror,
+		this._x = e.pageX;
+		this._y = e.pageY;
+		}
+	else if (event != undefined && event.x != undefined && event.clientX == undefined)
+		{ // ie4 ?
+		this._x = event.x;
+		this._y = event.y;
+		}
+	else if (e.clientX != undefined )
+		{ // IE6,  IE7, IE5.5
+		if (document.documentElement)
+			{
+			this._x = e.clientX + ( document.documentElement.scrollLeft || document.body.scrollLeft);
+			this._y = e.clientY + ( document.documentElement.scrollTop || document.body.scrollTop);
+			}
+		else
+			{
+			this._x = e.clientX + document.body.scrollLeft;
+			this._y = e.clientY + document.body.scrollTop;
+			}
+		/*
+		}
+		else if(event != undefined && event.x != undefined)
+		{ // IE6,  IE7, IE5.5
+		tooltip.x = event.x + ( document.documentElement.scrollLeft || document.body.scrollLeft);
+		tooltip.y = event.y + ( document.documentElement.scrollTop || document.body.scrollTop);
+		*/
+		}
+	else
+		{
+		this._x = 0;
+		this._y = 0;
+		}
+
+	var MovX = this._x + this.offsetx;
+	if ((MovX+this.GetDivW(this._tooltipElement)) > (this.GetClientW() + this.GetScrollX() - 2))
+		{
+		MovX = this.GetClientW() + this.GetScrollX() - 2 - this.GetDivW(this._tooltipElement);
+		}
+	var MovY = this._y - this.offsety - this.GetDivH(this._tooltipElement);
+	if (MovY < (this.GetScrollY() + 2))
+		{
+		MovY = this._y + this.offsety;
+		}
 	
-	var MovX = EmpireBoard.Tooltip._x + EmpireBoard.Tooltip.offsetx;
-	var MovY = EmpireBoard.Tooltip._y - EmpireBoard.Tooltip.offsety - EmpireBoard.Tooltip.GetDivH(EmpireBoard.Tooltip._tooltipElement);
-	
-    EmpireBoard.Tooltip.moveTo( MovX , MovY);
+	//window.status = "Scroll="+this.GetScrollX()+","+this.GetScrollY();
+	//window.status = "Client="+this.GetClientW()+","+this.GetClientH();
+
+	this.moveTo(MovX , MovY);
 	};
 	
 EmpireBoard.Tooltip.GetDivH = function(el)
 	{
 	return (el ? (el.offsetHeight || el.style.pixelHeight || 0) : 0);
 	};
+	
+EmpireBoard.Tooltip.GetDivW = function(el)
+	{
+	return (el ? (el.offsetWidth || el.style.pixelWidth || 0) : 0);
+	};
+
+EmpireBoard.Tooltip.GetClientW = function()
+	{
+	var tt_db = document.documentElement || document.body ||
+				(document.getElementsByTagName ? document.getElementsByTagName("body")[0]
+				: null);
+	return (document.body && (typeof(document.body.clientWidth) != 'undefined') ? document.body.clientWidth
+			: (typeof(window.innerWidth) != 'undefined') ? window.innerWidth
+			: tt_db ? (tt_db.clientWidth || 0)
+			: 0);
+	};
+
+EmpireBoard.Tooltip.GetClientH = function()
+	{
+	var tt_db = document.documentElement || document.body ||
+				(document.getElementsByTagName ? document.getElementsByTagName("body")[0]
+				: null);
+	// Exactly this order seems to yield correct values in all major browsers
+	return (document.body && (typeof(document.body.clientHeight) != 'undefined') ? document.body.clientHeight
+			: (typeof(window.innerHeight) != 'undefined') ? window.innerHeight
+			: tt_db ? (tt_db.clientHeight || 0)
+			: 0);
+	};
+
+EmpireBoard.Tooltip.GetScrollX = function()
+	{
+	var tt_db = document.documentElement || document.body ||
+				(document.getElementsByTagName ? document.getElementsByTagName("body")[0]
+				: null);
+	return (window.pageXOffset || (tt_db ? (tt_db.scrollLeft || 0) : 0));
+	};
+	
+EmpireBoard.Tooltip.GetScrollY = function()
+	{
+	var tt_db = document.documentElement || document.body ||
+				(document.getElementsByTagName ? document.getElementsByTagName("body")[0]
+				: null);
+	return (window.pageYOffset || (tt_db ? (tt_db.scrollTop || 0) : 0));
+	};
 
 // Move the tooltip element
 EmpireBoard.Tooltip.moveTo = function(xL,yL)
 	{
-    if (EmpireBoard.Tooltip._tooltipElement.style)
+	if (this._tooltipElement.style)
 		{
-        EmpireBoard.Tooltip._tooltipElement.style.left = xL +"px";
-        EmpireBoard.Tooltip._tooltipElement.style.top = yL +"px";
+		this._tooltipElement.style.left = xL +"px";
+		this._tooltipElement.style.top = yL +"px";
 		}
 	else
 		{
-        EmpireBoard.Tooltip._tooltipElement.left = xL;
-        EmpireBoard.Tooltip._tooltipElement.top = yL;
+		this._tooltipElement.left = xL;
+		this._tooltipElement.top = yL;
 		}
 	};
 
@@ -5890,181 +5961,216 @@ if ((EmpireBoard.Ikariam.View() != '') && (EmpireBoard.Ikariam.View() != 'errorL
 	window.setInterval(realtimeFactDisplayF, 5000);
 	
 	EmpireBoard.CheckScriptUpdate();
-	}
+	};
 	
 EmpireBoard.EndTime = new Date().getTime();
 EmpireBoard.Log.Add('Ended after '+((EmpireBoard.EndTime - EmpireBoard.StartTime)/1000)+'s');
 
+
         EmpireBoard.GraphicAddon =
-	{
-	/* Require for ARexx */
-	_Parent:						 null,
-	EmpireBoardRequiredVersion:		 150,
-	AddOnName:						 'Empire Board Graphic AddOn',
-	
-	/* Addon optional metas for ARexx */
-	Version:						 11,
-	HomePage:						 '',
-	ScriptURL:						 '',
-	UserScriptsID:					 44424
-	};
+    {
+    /* Require for ARexx */
+    _Parent:                         null,
+    EmpireBoardRequiredVersion:         150,
+    AddOnName:                         'Empire Board Graphic AddOn',
+    
+    /* Addon optional metas for ARexx */
+    Version:                         11,
+    HomePage:                         '',
+    ScriptURL:                         '',
+    UserScriptsID:                     44424
+    };
 
 // Constructor method require for ARexx
 // May return true  or false (if failed)
 EmpireBoard.GraphicAddon.Init = function()
-	{
-	this.Apply_Styles();
-	return true;
-	};
-	
+    {
+    this.Apply_Styles();
+    return true;
+    };
+    
 EmpireBoard.GraphicAddon.Apply_Styles = function()
-	{
-	// define CSS 
-	var default_style = <><![CDATA[
-	/** Resources table **/
-	#EmpireBoardResources th { height: 26px !important; }
-	#EmpireBoardResources th.population,
-	#EmpireBoardResources th.wood,
-	#EmpireBoardResources th.wine,
-	#EmpireBoardResources th.marble,
-	#EmpireBoardResources th.crystal,
-	#EmpireBoardResources th.sulfur,
-	#EmpireBoardResources th.incomes { height: 26px !important; color: transparent !important;}
+    {
+    // define CSS 
+    var default_style = <><![CDATA[
+    /** Resources table **/
+    #EmpireBoardResources th { height: 26px !important; }
+    #EmpireBoardResources th.population,
+    #EmpireBoardResources th.wood,
+    #EmpireBoardResources th.wine,
+    #EmpireBoardResources th.marble,
+    #EmpireBoardResources th.crystal,
+    #EmpireBoardResources th.sulfur,
+    #EmpireBoardResources th.incomes { height: 26px !important; color: transparent !important;}
 
-	#EmpireBoardResources th.population {background: url(skin/resources/icon_population.gif) no-repeat center center;}
-	#EmpireBoardResources th.wood {background: url(skin/resources/icon_wood.gif) no-repeat center center;}
-	#EmpireBoardResources th.wine {background: url(skin/resources/icon_wine.gif) no-repeat center center;}
-	#EmpireBoardResources th.marble {background: url(skin/resources/icon_marble.gif) no-repeat center center;}
-	#EmpireBoardResources th.crystal {background: url(skin/resources/icon_glass.gif) no-repeat center center;}
-	#EmpireBoardResources th.sulfur {background: url(skin/resources/icon_sulfur.gif) no-repeat center center;}
-	#EmpireBoardResources th.incomes {background: url(skin/resources/icon_gold.gif) no-repeat center center;}
+    #EmpireBoardResources th.population {background: url(skin/resources/icon_population.gif) no-repeat center center;}
+    #EmpireBoardResources th.wood {background: url(skin/resources/icon_wood.gif) no-repeat center center;}
+    #EmpireBoardResources th.wine {background: url(skin/resources/icon_wine.gif) no-repeat center center;}
+    #EmpireBoardResources th.marble {background: url(skin/resources/icon_marble.gif) no-repeat center center;}
+    #EmpireBoardResources th.crystal {background: url(skin/resources/icon_glass.gif) no-repeat center center;}
+    #EmpireBoardResources th.sulfur {background: url(skin/resources/icon_sulfur.gif) no-repeat center center;}
+    #EmpireBoardResources th.incomes {background: url(skin/resources/icon_gold.gif) no-repeat center center;}
 
-	/** Buildings table **/
-	#EmpireBoardBuildings th { height: 36px !important; }
-	#EmpireBoardBuildings th.build_name0,
-	#EmpireBoardBuildings th.build_name1,
-	#EmpireBoardBuildings th.build_name2,
-	#EmpireBoardBuildings th.build_name3,
-	#EmpireBoardBuildings th.build_name4,
-	#EmpireBoardBuildings th.build_name5,
-	#EmpireBoardBuildings th.build_name6,
-	#EmpireBoardBuildings th.build_name7 { color: transparent !important; }
+    /** Buildings table **/
+    #EmpireBoardBuildings th { height: 36px !important; }
+    #EmpireBoardBuildings th.build_name0,
+    #EmpireBoardBuildings th.build_name1,
+    #EmpireBoardBuildings th.build_name2,
+    #EmpireBoardBuildings th.build_name3,
+    #EmpireBoardBuildings th.build_name4,
+    #EmpireBoardBuildings th.build_name5,
+    #EmpireBoardBuildings th.build_name6,
+    #EmpireBoardBuildings th.build_name7 { color: transparent !important; }
 
-	#EmpireBoardBuildings th.townHall {background: url(skin/img/city/building_townhall.gif) no-repeat -20px -52px;}
-	#EmpireBoardBuildings th.temple {background: url(skin/img/city/building_temple.gif) no-repeat 2px -16px;}
-	#EmpireBoardBuildings th.academy {background: url(skin/img/city/building_academy.gif) no-repeat -59px -1px;}
-	#EmpireBoardBuildings th.port {background: url(skin/img/city/building_port.gif) no-repeat -21px -52px;}
-	#EmpireBoardBuildings th.shipyard {background: url(skin/img/city/building_shipyard.gif) no-repeat -58px -32px;}
-	#EmpireBoardBuildings th.warehouse {background: url(skin/img/city/building_warehouse.gif) no-repeat -10px -23px;}
-	#EmpireBoardBuildings th.wall {background: url(skin/img/city/building_wall.gif) no-repeat -99px -39px;}
-	#EmpireBoardBuildings th.tavern {background: url(skin/img/city/building_tavern.gif) no-repeat -25px -6px;}
-	#EmpireBoardBuildings th.museum {background: url(skin/img/city/building_museum.gif) no-repeat -44px -21px;}
-	#EmpireBoardBuildings th.palace {background: url(skin/img/city/building_palace.gif) no-repeat -25px -40px;}
-	#EmpireBoardBuildings th.palaceColony {background: url(skin/img/city/building_palaceColony.gif) no-repeat -45px -35px;}
-	#EmpireBoardBuildings th.embassy {background: url(skin/img/city/building_embassy.gif) no-repeat -14px -33px;}
-	#EmpireBoardBuildings th.branchOffice {background: url(skin/img/city/building_branchOffice.gif) no-repeat -15px -35px;}
-	#EmpireBoardBuildings th.safehouse {background: url(skin/img/city/building_safehouse.gif) no-repeat 1px -11px;}
-	#EmpireBoardBuildings th.barracks {background: url(skin/img/city/building_barracks.gif) no-repeat -45px -22px;}
-	#EmpireBoardBuildings th.workshop {background: url(skin/img/city/building_workshop.gif) no-repeat -9px -24px;}
-	#EmpireBoardBuildings th.carpentering {background: url(skin/img/city/building_carpentering.gif) no-repeat -13px -25px;}
-	#EmpireBoardBuildings th.forester {background: url(skin/img/city/building_forester.gif) no-repeat -19px -25px;}
-	#EmpireBoardBuildings th.stonemason {background: url(skin/img/city/building_stonemason.gif) no-repeat -77px -31px;}
-	#EmpireBoardBuildings th.glassblowing {background: url(skin/img/city/building_glassblowing.gif) no-repeat -36px -25px;}
-	#EmpireBoardBuildings th.winegrower {background: url(skin/img/city/building_winegrower.gif) no-repeat -37px -33px;}
-	#EmpireBoardBuildings th.alchemist {background: url(skin/img/city/building_alchemist.gif) no-repeat -26px -30px;}
-	#EmpireBoardBuildings th.architect {background: url(skin/img/city/building_architect.gif) no-repeat -20px -12px;}
-	#EmpireBoardBuildings th.optician {background: url(skin/img/city/building_optician.gif) no-repeat -28px -17px;}
-	#EmpireBoardBuildings th.vineyard {background: url(skin/img/city/building_vineyard.gif) no-repeat -50px -25px;}
-	#EmpireBoardBuildings th.fireworker {background: url(skin/img/city/building_fireworker.gif) no-repeat -58px -11px;}
+    #EmpireBoardBuildings th.townHall {background: url(skin/img/city/building_townhall.gif) no-repeat -20px -52px;}
+    #EmpireBoardBuildings th.temple {background: url(skin/img/city/building_temple.gif) no-repeat 2px -16px;}
+    #EmpireBoardBuildings th.academy {background: url(skin/img/city/building_academy.gif) no-repeat -59px -1px;}
+    #EmpireBoardBuildings th.port {background: url(skin/img/city/building_port.gif) no-repeat -21px -52px;}
+    #EmpireBoardBuildings th.shipyard {background: url(skin/img/city/building_shipyard.gif) no-repeat -58px -32px;}
+    #EmpireBoardBuildings th.warehouse {background: url(skin/img/city/building_warehouse.gif) no-repeat -10px -23px;}
+    #EmpireBoardBuildings th.wall {background: url(skin/img/city/building_wall.gif) no-repeat -99px -39px;}
+    #EmpireBoardBuildings th.tavern {background: url(skin/img/city/building_tavern.gif) no-repeat -25px -6px;}
+    #EmpireBoardBuildings th.museum {background: url(skin/img/city/building_museum.gif) no-repeat -44px -21px;}
+    #EmpireBoardBuildings th.palace {background: url(skin/img/city/building_palace.gif) no-repeat -25px -40px;}
+    #EmpireBoardBuildings th.palaceColony {background: url(skin/img/city/building_palaceColony.gif) no-repeat -45px -35px;}
+    #EmpireBoardBuildings th.embassy {background: url(skin/img/city/building_embassy.gif) no-repeat -14px -33px;}
+    #EmpireBoardBuildings th.branchOffice {background: url(skin/img/city/building_branchOffice.gif) no-repeat -15px -35px;}
+    #EmpireBoardBuildings th.safehouse {background: url(skin/img/city/building_safehouse.gif) no-repeat 1px -11px;}
+    #EmpireBoardBuildings th.barracks {background: url(skin/img/city/building_barracks.gif) no-repeat -45px -22px;}
+    #EmpireBoardBuildings th.workshop {background: url(skin/img/city/building_workshop.gif) no-repeat -9px -24px;}
+    #EmpireBoardBuildings th.carpentering {background: url(skin/img/city/building_carpentering.gif) no-repeat -13px -25px;}
+    #EmpireBoardBuildings th.forester {background: url(skin/img/city/building_forester.gif) no-repeat -19px -25px;}
+    #EmpireBoardBuildings th.stonemason {background: url(skin/img/city/building_stonemason.gif) no-repeat -77px -31px;}
+    #EmpireBoardBuildings th.glassblowing {background: url(skin/img/city/building_glassblowing.gif) no-repeat -36px -25px;}
+    #EmpireBoardBuildings th.winegrower {background: url(skin/img/city/building_winegrower.gif) no-repeat -37px -33px;}
+    #EmpireBoardBuildings th.alchemist {background: url(skin/img/city/building_alchemist.gif) no-repeat -26px -30px;}
+    #EmpireBoardBuildings th.architect {background: url(skin/img/city/building_architect.gif) no-repeat -20px -12px;}
+    #EmpireBoardBuildings th.optician {background: url(skin/img/city/building_optician.gif) no-repeat -28px -17px;}
+    #EmpireBoardBuildings th.vineyard {background: url(skin/img/city/building_vineyard.gif) no-repeat -50px -25px;}
+    #EmpireBoardBuildings th.fireworker {background: url(skin/img/city/building_fireworker.gif) no-repeat -58px -11px;}
 
-	/** Army table **/
-	#EmpireBoardArmy th { height: 32px !important; }
-	#EmpireBoardArmy th.unit_name {color: transparent !important;}
+    /** Army table **/
+    #EmpireBoardArmy th { height: 32px !important; }
+    #EmpireBoardArmy th.unit_name {color: transparent !important;}
 
-	#EmpireBoardArmy th.ship_ram {background: url(skin/characters/fleet/40x40/ship_ram_r_40x40.gif) no-repeat center -3px;}
-	#EmpireBoardArmy th.ship_ballista {background: url(skin/characters/fleet/40x40/ship_ballista_r_40x40.gif) no-repeat center -3px;}
-	#EmpireBoardArmy th.ship_flamethrower {background: url(skin/characters/fleet/40x40/ship_flamethrower_r_40x40.gif) no-repeat center -3px;}
-	#EmpireBoardArmy th.ship_catapult {background: url(skin/characters/fleet/40x40/ship_catapult_r_40x40.gif) no-repeat center -2px;}
-	#EmpireBoardArmy th.ship_steamboat {background: url(skin/characters/fleet/40x40/ship_steamboat_r_40x40.gif) no-repeat center -2px;}
-	#EmpireBoardArmy th.ship_mortar {background: url(skin/characters/fleet/40x40/ship_mortar_r_40x40.gif) no-repeat center -3px;}
-	#EmpireBoardArmy th.ship_submarine {background: url(skin/characters/fleet/40x40/ship_submarine_r_40x40.gif) no-repeat center -3px;}
+    #EmpireBoardArmy th.ship_ram {background: url(skin/characters/fleet/40x40/ship_ram_r_40x40.gif) no-repeat center -3px;}
+    #EmpireBoardArmy th.ship_ballista {background: url(skin/characters/fleet/40x40/ship_ballista_r_40x40.gif) no-repeat center -3px;}
+    #EmpireBoardArmy th.ship_flamethrower {background: url(skin/characters/fleet/40x40/ship_flamethrower_r_40x40.gif) no-repeat center -3px;}
+    #EmpireBoardArmy th.ship_catapult {background: url(skin/characters/fleet/40x40/ship_catapult_r_40x40.gif) no-repeat center -2px;}
+    #EmpireBoardArmy th.ship_steamboat {background: url(skin/characters/fleet/40x40/ship_steamboat_r_40x40.gif) no-repeat center -2px;}
+    #EmpireBoardArmy th.ship_mortar {background: url(skin/characters/fleet/40x40/ship_mortar_r_40x40.gif) no-repeat center -3px;}
+    #EmpireBoardArmy th.ship_submarine {background: url(skin/characters/fleet/40x40/ship_submarine_r_40x40.gif) no-repeat center -3px;}
 
-	#EmpireBoardArmy th.slinger {background: url(skin/characters/military/x40_y40/y40_slinger_faceright.gif) no-repeat center 2px;}
-	#EmpireBoardArmy th.spearman {background: url(skin/characters/military/x40_y40/y40_spearman_faceright.gif) no-repeat center 2px;}
-	#EmpireBoardArmy th.swordsman {background: url(skin/characters/military/x40_y40/y40_swordsman_faceright.gif) no-repeat center 0px;}
-	#EmpireBoardArmy th.phalanx {background: url(skin/characters/military/x40_y40/y40_phalanx_faceright.gif) no-repeat center -3px;}
-	#EmpireBoardArmy th.archer {background: url(skin/characters/military/x40_y40/y40_archer_faceright.gif) no-repeat center 2px;}
-	#EmpireBoardArmy th.marksman {background: url(skin/characters/military/x40_y40/y40_marksman_faceright.gif) no-repeat center 3px;}
-	
-	#EmpireBoardArmy th.medic {background: url(skin/characters/military/x40_y40/y40_medic_faceright.gif) no-repeat center 4px;}
-	#EmpireBoardArmy th.cook {background: url(skin/characters/military/x40_y40/y40_cook_faceright.gif) no-repeat center 1px;}
+    #EmpireBoardArmy th.slinger {background: url(skin/characters/military/x40_y40/y40_slinger_faceright.gif) no-repeat center 2px;}
+    #EmpireBoardArmy th.spearman {background: url(skin/characters/military/x40_y40/y40_spearman_faceright.gif) no-repeat center 2px;}
+    #EmpireBoardArmy th.swordsman {background: url(skin/characters/military/x40_y40/y40_swordsman_faceright.gif) no-repeat center 0px;}
+    #EmpireBoardArmy th.phalanx {background: url(skin/characters/military/x40_y40/y40_phalanx_faceright.gif) no-repeat center -3px;}
+    #EmpireBoardArmy th.archer {background: url(skin/characters/military/x40_y40/y40_archer_faceright.gif) no-repeat center 2px;}
+    #EmpireBoardArmy th.marksman {background: url(skin/characters/military/x40_y40/y40_marksman_faceright.gif) no-repeat center 3px;}
+    
+    #EmpireBoardArmy th.medic {background: url(skin/characters/military/x40_y40/y40_medic_faceright.gif) no-repeat center 4px;}
+    #EmpireBoardArmy th.cook {background: url(skin/characters/military/x40_y40/y40_cook_faceright.gif) no-repeat center 1px;}
 
-	#EmpireBoardArmy th.gyrocopter {background: url(skin/characters/military/x40_y40/y40_gyrocopter_faceright.gif) no-repeat center -9px;}
-	#EmpireBoardArmy th.steamgiant {background: url(skin/characters/military/x40_y40/y40_steamgiant_faceright.gif) no-repeat center -3px;}
-	#EmpireBoardArmy th.bombardier {background: url(skin/characters/military/x40_y40/y40_bombardier_faceright.gif) no-repeat center -14px;}
-	#EmpireBoardArmy th.ram {background: url(skin/characters/military/x40_y40/y40_ram_faceright.gif) no-repeat center 2px;}
-	#EmpireBoardArmy th.catapult {background: url(skin/characters/military/x40_y40/y40_catapult_faceright.gif) no-repeat center -1px;}
-	#EmpireBoardArmy th.mortar {background: url(skin/characters/military/x40_y40/y40_mortar_faceright.gif) no-repeat center 0px;}
-	]]></>.toXMLString();
+    #EmpireBoardArmy th.gyrocopter {background: url(skin/characters/military/x40_y40/y40_gyrocopter_faceright.gif) no-repeat center -9px;}
+    #EmpireBoardArmy th.steamgiant {background: url(skin/characters/military/x40_y40/y40_steamgiant_faceright.gif) no-repeat center -3px;}
+    #EmpireBoardArmy th.bombardier {background: url(skin/characters/military/x40_y40/y40_bombardier_faceright.gif) no-repeat center -14px;}
+    #EmpireBoardArmy th.ram {background: url(skin/characters/military/x40_y40/y40_ram_faceright.gif) no-repeat center 2px;}
+    #EmpireBoardArmy th.catapult {background: url(skin/characters/military/x40_y40/y40_catapult_faceright.gif) no-repeat center -1px;}
+    #EmpireBoardArmy th.mortar {background: url(skin/characters/military/x40_y40/y40_mortar_faceright.gif) no-repeat center 0px;}
+    ]]></>.toXMLString();
 
-	GM_addStyle(default_style);
-	}
+    GM_addStyle(default_style);
+    }
 
-EmpireBoard.ARexx.RegisterAddOn(EmpireBoard.GraphicAddon);
+if (Beastx.Config.options.EmpireBoard.useGraphicAddOn) {
+    EmpireBoard.ARexx.RegisterAddOn(EmpireBoard.GraphicAddon);
+}
+    
         EmpireBoard.ShortcutsAddon =
-	{
-	/* Require for ARexx */
-	_Parent:						 null,
-	EmpireBoardRequiredVersion:		 168,
-	AddOnName:						 'Empire Board Shortcuts AddOn',
-	
-	/* Addon optional metas for ARexx */
-	Version:						 1,
-	HomePage:						 '',
-	ScriptURL:						 '',
-	UserScriptsID:					 60840
-	};
+    {
+    /* Require for ARexx */
+    _Parent:                         null,
+    EmpireBoardRequiredVersion:         168,
+    AddOnName:                         'Empire Board Shortcuts AddOn',
+    
+    /* Addon optional metas for ARexx */
+    Version:                         1,
+    HomePage:                         '',
+    ScriptURL:                         '',
+    UserScriptsID:                     60840
+    };
 
 // Constructor method require for ARexx
 // May return true  or false (if failed)
 EmpireBoard.ShortcutsAddon.Init = function()
-	{
-	this.Apply_Styles();
-	
-	var advCities = document.getElementById("advCities");
-	advCities.innerHTML += '<a accesskey="x" title="Empire Board - resources - overview [Alt+Shift+X]" href="#EmpireBoardResources" class="EmpireBoardShortcut"></a>';
-	
-	var advMilitary = document.getElementById("advMilitary");
-	advMilitary.innerHTML += '<a accesskey="c" title="Empire Board - army - overview [Alt+Shift+C]" href="#EmpireBoardArmy" class="EmpireBoardShortcut"></a>';
-	
-	var advResearch = document.getElementById("advResearch");
-	advResearch.innerHTML += '<a accesskey="v" title="Empire Board - buildings - overview [Alt+Shift+V]" href="#EmpireBoardBuildings" class="EmpireBoardShortcut"></a>';
-	
-	return true;
-	};
-	
+    {
+    this.Apply_Styles();
+    
+    var advCities = document.getElementById("advCities");
+    advCities.innerHTML += '<a accesskey="x" title="Empire Board - resources - overview [Alt+Shift+X]" href="#EmpireBoardResources" class="EmpireBoardShortcut"></a>';
+    
+    var advMilitary = document.getElementById("advMilitary");
+    advMilitary.innerHTML += '<a accesskey="c" title="Empire Board - army - overview [Alt+Shift+C]" href="#EmpireBoardArmy" class="EmpireBoardShortcut"></a>';
+    
+    var advResearch = document.getElementById("advResearch");
+    advResearch.innerHTML += '<a accesskey="v" title="Empire Board - buildings - overview [Alt+Shift+V]" href="#EmpireBoardBuildings" class="EmpireBoardShortcut"></a>';
+    
+    return true;
+    };
+    
 EmpireBoard.ShortcutsAddon.Apply_Styles = function()
-	{
-	// define CSS 
-	var default_style = <><![CDATA[
-	#advisors a.EmpireBoardShortcut {
-		position: absolute;
-		width: 20px;
-		height: 20px;
-		left: 0px;
-		top: 80px;
-		}
-	
-	#advisors a.EmpireBoardShortcut,
-	#advisors a.EmpireBoardShortcut:hover {
-		background-image: url(skin/layout/icon-world.gif);
-		}
-	
-	]]></>.toXMLString();
+    {
+    // define CSS 
+    var default_style = <><![CDATA[
+    #advisors a.EmpireBoardShortcut {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        left: 0px;
+        top: 80px;
+        }
+    
+    #advisors a.EmpireBoardShortcut,
+    #advisors a.EmpireBoardShortcut:hover {
+        background-image: url(skin/layout/icon-world.gif);
+        }
+    
+    ]]></>.toXMLString();
 
-	GM_addStyle(default_style);
-	};
-	
-EmpireBoard.ARexx.RegisterAddOn(EmpireBoard.ShortcutsAddon);
+    GM_addStyle(default_style);
+    };
+    
+if (Beastx.Config.options.EmpireBoard.useShortcutsAddOn) {
+    EmpireBoard.ARexx.RegisterAddOn(EmpireBoard.ShortcutsAddon);
+}
     })()
 }
+
+Beastx.EmpireBoard.prototype.getDefaultConfigs = function() {
+    Beastx.Config.options.EmpireBoard = {
+        enabled: true,
+        useGraphicAddOn: false,
+        useShortcutsAddOn: true
+    }
+}
+
+Beastx.EmpireBoard.prototype.getConfigs = function() {
+    return {
+        useGraphicAddOn: this.useGraphicAddOnCheckbox.checked,
+        useShortcutsAddOn: this.useShortcutsAddOnCheckbox.checked
+    };
+}
+
+Beastx.EmpireBoard.prototype.getOptionBox = function() {
+    this.useGraphicAddOnCheckbox = this.checkbox('useGraphicAddOn', Beastx.Config.options.EmpireBoard.useGraphicAddOn);
+    this.useShortcutsAddOnCheckbox = this.checkbox('useShortcutsAddOn', Beastx.Config.options.EmpireBoard.useShortcutsAddOn);
+    return this.keyValueTable([
+        { label: 'Usar Grapich Addon', value: this.useGraphicAddOnCheckbox },
+        { label: 'Usar Boomarks Addon', value: this.useShortcutsAddOnCheckbox }
+    ]);
+}
+
+Beastx.registerModule(
+    'Empire Board',
+    'Este modulo incluye los script Empire Board y Empire Board Graphic AddOn'
+);
