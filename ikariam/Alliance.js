@@ -23,6 +23,34 @@ Beastx.AllianceObject.prototype.init = function(id) {
 
 
 /***************************************************************
+******* Main methods to load and save alliance data ********
+***************************************************************/
+
+Beastx.AllianceObject.prototype.loadData = function() {
+    var tempData = IkaTools.getVal('alliance');
+    if (tempData) {
+        function getPlayerObjectFromElement(object) {
+            var playerObj = New(Beastx.PlayerObject, [ object.id ])
+            playerObj.setData({
+                name: object.name
+            });
+            return playerObj;
+        }
+        if (tempData.players && tempData.players.length > 0) {
+            for (var i = 0; i < tempData.players.length; ++i) {
+                tempData.players[i] = getPlayerObjectFromElement(tempData.players[i]);
+            }
+        }
+        this.setData(tempData);
+    }
+}
+
+Beastx.AllianceObject.prototype.saveData = function() {
+    IkaTools.setVal('alliance', this.getData());
+}
+
+
+/***************************************************************
 ****** Main methods to set and get data and clone ********
 ***************************************************************/
 
