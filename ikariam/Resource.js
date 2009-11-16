@@ -79,5 +79,5 @@ Beastx.ResourceObject.prototype.getAmmount = function() {
 ***************************************************************/
 
 Beastx.ResourceObject.prototype.toString = function() {
-    return this.typeNames[this.typeId];
+    return this.typeId ? this.typeNames[this.typeId] : this.scriptName;
 }
