@@ -46,6 +46,7 @@ IkariamTools.prototype.sendInfoToServer = function(serverClassName, data, onLoad
 IkariamTools.prototype.loadData = function() {
     this.cities.loadCitiesData();
     this.player.loadData();
+    this.alliance.loadData();
 
     var currentView = this.getView();
     if (this[currentView + 'View']) {
@@ -91,6 +92,8 @@ IkariamTools.prototype.diplomacyAdvisorAllyView = function() {
         ranking: pointsInfo.split(' ')[0]
     });
     
+    this.alliance.saveData();
+    
     Beastx.todo('controlar los miembros nuevos y los miembros que no estan mas en la alianza', this);
 }
 
@@ -106,17 +109,17 @@ IkariamTools.prototype.optionsView = function() {
 IkariamTools.prototype.cityView = function() {
     var cities = this.cities.getAllCities();
     for (var i = 0; i < cities.length; ++i) {
-        Beastx.log(cities[i].getAllAvailableResources(), cities[i].getName());
-        Beastx.log(cities[i].getAllAvailableBuildingsForUpgrade(), cities[i].getName());
+        //~ Beastx.log(cities[i].getAllAvailableResources(), cities[i].getName());
+        //~ Beastx.log(cities[i].getAllAvailableBuildingsForUpgrade(), cities[i].getName());
     }
 }
 
 IkariamTools.prototype.resourceView = function() {
-    Beastx.log('agregar un listener al boton de confirmar y actualizar los datos de production de la city: ' + this.cities.getCurrentCity().getName())
+    //~ Beastx.log('agregar un listener al boton de confirmar y actualizar los datos de production de la city: ' + this.cities.getCurrentCity().getName())
 }
 
 IkariamTools.prototype.tradegoodView = function() {
-    Beastx.log('agregar un listener al boton de confirmar y actualizar los datos de production de la city: ' + this.cities.getCurrentCity().getName())
+    //~ Beastx.log('agregar un listener al boton de confirmar y actualizar los datos de production de la city: ' + this.cities.getCurrentCity().getName())
 }
 
 IkariamTools.prototype.islandView = function() {
@@ -134,7 +137,7 @@ IkariamTools.prototype.tavernView = function() {
 IkariamTools.prototype.financesView = function() {
     Beastx.log('leer los datos y actualizar los datos de production de oro de todas las cities')
     var rows = $$('#balance tr');
-    var cities = this.cities.getAll();
+    var cities = this.cities.getAllCities();
     for (var i = 0; i < cities.length; ++i) {
         var cityName = rows[i +1].childNodes[1].childNodes[0].textContent.trim();
         var city = this.cities.getCityByName(cityName);
