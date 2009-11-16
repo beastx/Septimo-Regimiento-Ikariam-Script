@@ -97,5 +97,5 @@ Beastx.BuildingObject.prototype.getResourceRequired = function() {
 ***************************************************************/
 
 Beastx.BuildingObject.prototype.toString = function() {
-    return this.buildingNames[this.buildingTypeId];
+    return this.buildingTypeId ? this.buildingNames[this.buildingTypeId] : this.scriptName;
 }
