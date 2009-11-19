@@ -9,64 +9,65 @@
 // @exclude              http://*.ikariam.*/*?view=premiumPayment
 // @exclude              http://*.ikariam.*/*?view=premium
 
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/ikariam/IkaTools.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/ikariam/IkaTools.js
 
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/Json.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/VAR.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/DOM.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/Beastx.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/ScriptUpdater.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/requires/Json.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/requires/VAR.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/requires/DOM.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/requires/Beastx.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/requires/ScriptUpdater.js
 
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/ColorSelector.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/DragManager.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/FloatingPopup.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/requires/TabManager.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/requires/ColorSelector.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/requires/DragManager.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/requires/FloatingPopup.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/requires/TabManager.js
 
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/ikariam/CitiesList.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/ikariam/City.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/ikariam/Building.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/ikariam/BuildingsList.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/ikariam/Island.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/ikariam/Player.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/ikariam/Alliance.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/ikariam/Resource.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/ikariam/CitiesList.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/ikariam/City.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/ikariam/Building.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/ikariam/BuildingsList.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/ikariam/Island.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/ikariam/Player.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/ikariam/Alliance.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/ikariam/Resource.js
 
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/AllianceMap.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/AlliedOnlineAdvisor.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/CombatConverter.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/DataSaver.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/DistanceCalculator.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/DonationsPageHelper.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/Embassytools.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/EmpireBoard.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/FavoriteTargets.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/GeneralViewPageCleaner.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/InlineScore.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/LibraryImprovements.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/MessageManager.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/OurDeployedCitiesCleaner.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/PillageHelper.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/ResearchAdvisorHelper.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/ScrollbarRemover.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/ShipmentTimes.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/ShipMovementsViewImprover.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/ThinViews.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/TransportResourcesHelper.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/TriumphalArch.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/UnitFormatter.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/UpgradeWatcher.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/ResearchPointsHelper.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/GroupMessenger.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/ArribalTimesImprover.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/modules/CombatLayoutHelper.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/AllianceMap.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/AlliedOnlineAdvisor.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/CombatConverter.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/DataSaver.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/DistanceCalculator.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/DonationsPageHelper.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/Embassytools.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/EmpireBoard.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/FavoriteTargets.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/GeneralViewPageCleaner.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/InlineScore.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/LibraryImprovements.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/MessageManager.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/OurDeployedCitiesCleaner.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/PillageHelper.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/ResearchAdvisorHelper.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/ScrollbarRemover.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/ShipmentTimes.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/ShipMovementsViewImprover.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/ThinViews.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/TransportResourcesHelper.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/TriumphalArch.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/UnitFormatter.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/UpgradeWatcher.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/ResearchPointsHelper.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/GroupMessenger.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/ArribalTimesImprover.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/modules/CombatLayoutHelper.js
 
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/TopMenu.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/OptionsPage.js
-// @require               http://7moreg.beastx.com.ar/tools/userScripts/Notes.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/TopMenu.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/OptionsPage.js
+// @require               http://7moreg.beastx.com.ar/tools/userScripts/0.7/Notes.js
 
-// @version               0.6
+// @version               0.7
 // @author                Beastx
 //
+// @history                0.7 added message manager module first release
 // @history                0.6 added donation page helper module
 // @history                0.6 added arribal time module
 // @history                0.5 fixed problem width main menu
@@ -79,6 +80,18 @@
 // @history                0.0 Initial release
 
 // ==/UserScript==
+
+ String.prototype.trim = function() {  
+     return this.replace(/^\s+|\s+$/g,"");  
+ }  
+   
+ String.prototype.ltrim = function() {  
+     return this.replace(/^\s+/,"");  
+ }  
+   
+ String.prototype.rtrim = function() {  
+     return this.replace(/\s+$/,"");  
+ }  
 
 if (!GM_getValue('logAdded')) {
     //~ GM_setValue('logAdded', true);
@@ -124,7 +137,7 @@ if (!GM_getValue('logAdded2')) {
     IkaTools = New(IkariamTools);
     IkaTools.loadData();
 
-    Beastx.myNotes = NewModule(Beastx.Notes);
+    //~ Beastx.myNotes = NewModule(Beastx.Notes);
     var actualView = IkaTools.getView();
     var mainMenu = NewModule(Beastx.TopMenu);
     
@@ -138,6 +151,7 @@ if (!GM_getValue('logAdded2')) {
             NewModule(Beastx.OptionsPage);
         }
         
+        if (Beastx.Config.options.MessageManager && Beastx.Config.options.MessageManager.enabled) { NewModule(Beastx.MessageManager, [ actualView ]); }
         if (Beastx.Config.options.OurDeployedCitiesCleaner && Beastx.Config.options.OurDeployedCitiesCleaner.enabled) { NewModule(Beastx.OurDeployedCitiesCleaner); }
         if (Beastx.Config.options.ThinViews && Beastx.Config.options.ThinViews.enabled) { var thinViews = NewModule(Beastx.ThinViews, [ actualView ]); }
         if (Beastx.Config.options.ScrollbarRemover && Beastx.Config.options.ScrollbarRemover.enabled) { var scrollbarRemover = NewModule(Beastx.ScrollbarRemover); }
