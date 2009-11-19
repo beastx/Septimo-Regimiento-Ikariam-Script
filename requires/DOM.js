@@ -58,6 +58,15 @@ function NewModule(classRef, constructorArgs, events) {
     classRef.prototype.checkbox = function(id, value) {
         return DOM.createElement('input', { type: 'checkbox', name: id, checked:  value });
     }
+    classRef.prototype.combo = function(id, options, value) {
+        var optionsElements = [];
+        for (var i = 0; i < options.length; ++i) {
+            optionsElements.push(DOM.createElement('option', { value: options[i].value }, [ options[i].text ]));
+        }
+        var select = DOM.createElement('select', { name: id}, optionsElements);
+        select.value = value;
+        return select;
+    }
     classRef.prototype.keyValueTable = function(rowsArray) {
         var tbody = DOM.createElement('tbody');
         for (var i = 0; i < rowsArray.length; ++i) {
