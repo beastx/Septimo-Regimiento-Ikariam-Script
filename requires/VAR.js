@@ -307,3 +307,22 @@ VAR.formatNumberToIkariam = function(number) {
     }
     return numberString;
 }
+
+VAR.cutText = function(text, length, addColons) {
+    if (!length) { length = 100; }
+    var cutText = text.substr(0,length);
+    if (addColons) {
+        if (text.length > length) {
+            return cutText + '...';
+        } else {
+            return cutText;
+        }
+    } else  {
+        return cutText;
+    }
+}
+
+VAR.replaceURLWithHTMLLinks = function(text, target) {
+    var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/i;
+    return text.replace(exp,"<a class='parsedLink' target='_blank' href='$1'>$1</a>"); 
+}
