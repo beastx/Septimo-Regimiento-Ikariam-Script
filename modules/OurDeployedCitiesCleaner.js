@@ -34,6 +34,10 @@ Beastx.OurDeployedCitiesCleaner.prototype.loadAlliedCitiesData = function() {
         Beastx.setGMValue('OurDeployedCitiesCleanerAlliedCities', this.alliedCities);
     } else {
         this.alliedCities = Beastx.getGMValue('OurDeployedCitiesCleanerAlliedCities');
+        if (!this.alliedCities) {
+            alert('Es necesario ir a la pagina de la alianza para obtener los datos para que funcione este modulo. Sera redirigido en este momento.');
+            location.href = 'http://s2.ar.ikariam.com/index.php?view=diplomacyAdvisorAlly';
+        }
     }
 }
 
